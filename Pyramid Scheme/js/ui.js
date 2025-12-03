@@ -476,12 +476,25 @@ const UI = {
   updateAPStoreTabVisibility() {
     const pyramids = GameState.state.pyramids || 0;
     const apStoreTab = document.getElementById('ap-store-tab');
-    
-    if (apStoreTab && pyramids >= 100000) {
-      // Reveal the AP Store tab once player reaches 100k pyramids
+
+    // Reveal the AP Store tab if:
+    // - player has reached the pyramid unlock threshold, OR
+    // - player has earned AP (prestiged at least once), OR
+    // - the unlocked flag was previously set (persisted in save)
+    const hasAP = (GameState.state.alienPoints || 0) > 0;
+    const unlockedFlag = GameState.state.apStoreUnlocked === true;
+
+    if (!apStoreTab) return;
+
+    if (pyramids >= 100000 || hasAP || unlockedFlag) {
       if (apStoreTab.classList.contains('hidden')) {
         apStoreTab.classList.remove('hidden');
         console.log('🎉 AP Store unlocked!');
+      }
+
+      // Persist the unlocked state so it stays visible after reloads
+      if (!GameState.state.apStoreUnlocked) {
+        GameState.state.apStoreUnlocked = true;
       }
     }
   },

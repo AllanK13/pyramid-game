@@ -26,7 +26,9 @@ const SaveLoad = {
         workers: this.serializeWorkers(GameState.state.workers),
         
         // Metadata
-        lastSaveTime: Date.now()
+        lastSaveTime: Date.now(),
+        // UI state
+        apStoreUnlocked: GameState.state.apStoreUnlocked === true
       };
 
       const saveString = JSON.stringify(saveData);
@@ -72,6 +74,8 @@ const SaveLoad = {
       
       // Restore timestamps
       GameState.state.lastSaveTime = saveData.lastSaveTime || Date.now();
+      // Restore AP Store unlocked state (persisted after first prestige)
+      GameState.state.apStoreUnlocked = saveData.apStoreUnlocked === true;
       GameState.state.lastUpdateTime = Date.now();
       
       console.log('📂 Game loaded successfully');
@@ -84,9 +88,10 @@ const SaveLoad = {
       const lastSave = saveData.lastSaveTime || now;
       const timeAway = now - lastSave;
       
-      // Only calculate offline progress if away for more than 1 minute
+      // Only calculate offline progress if away longer than configured minimum
+      const minOfflineMs = CONFIG.OFFLINE_MIN_TIME_MS || 60000;
       let offlineData = null;
-      if (timeAway > 60000 && GameState.state.workers) {
+      if (timeAway > minOfflineMs && GameState.state.workers) {
         console.log(`⏰ Time away: ${Math.floor(timeAway / 1000 / 60)} minutes`);
         offlineData = GameEngine.calculateOfflineProgress(timeAway);
         console.log(`   Offline pyramids gained: ${offlineData.pyramidsGained}`);
@@ -147,7 +152,9 @@ const SaveLoad = {
       stoneProgress: GameState.state.stoneProgress || 0,
       
       // Metadata
-      lastSaveTime: GameState.state.lastSaveTime || Date.now()
+      lastSaveTime: GameState.state.lastSaveTime || Date.now(),
+      // UI state
+      apStoreUnlocked: GameState.state.apStoreUnlocked === true
     };
 
     const saveText = this.formatSaveAsText(saveData);
@@ -225,6 +232,8 @@ const SaveLoad = {
       
       // Save to localStorage
       this.save();
+      // Restore AP Store unlocked flag if present in imported save
+      GameState.state.apStoreUnlocked = saveData.apStoreUnlocked === true;
       
       console.log('📥 Save file imported successfully');
       return true;
@@ -283,6 +292,9 @@ const SaveLoad = {
         apGainBonus: 0,
         investorDecayRate: 0
       },
+
+      // UI state
+      apStoreUnlocked: false,
       
       // Timestamps
       lastSaveTime: Date.now(),

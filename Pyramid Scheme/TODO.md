@@ -20,9 +20,9 @@
   - ✅ Simulates worker production accurately
   - ✅ Activated `workerSpeedOffline` upgrade
 
-- [ ] **Implement Remaining Upgrade Functionality**
-  - [ ] `startingStones` - Give bonus sculpted stones on prestige reset
-  - [ ] `startingPyramids` - Give bonus pyramids on prestige reset
+- [x] **Implement Remaining Upgrade Functionality**
+  - ✅ `startingStones` - Give bonus sculpted stones on prestige reset
+  - ✅ `startingPyramids` - Give bonus pyramids on prestige reset
   - ✅ `apGainBonus` - Already implemented in Prestige.calculateAPGain()
   - ✅ `workerSpeedOffline` - Applied in offline calculations
 
@@ -37,19 +37,14 @@
   - ✅ Show AP displays after first prestige
   - ✅ Dynamic investor rows (6-10) based on hireCapacity
 
-- Fix AP Store visibility upon prestige
+- ✅ Fix AP Store visibility upon prestige
+- ✅ check offline popup - force debug mode
 
 - [ ] **Visual/Audio Feedback**
   - [ ] Add particle effects when pyramids complete
   - [ ] Add notification when investor hired
   - [ ] Add sound effects (optional, can be toggled)
   - [ ] Flash/highlight when milestone reached
-
-## 🚀 Medium Priority
-
-- [ ] Balance production rates and pyramid requirements
-  - Current: 10 clicks → 1 stone, 10 stones → 1 pyramid, 10 pyramids → 1 hire
-  - May need tuning for proper game pacing
 
 - [ ] Add artwork
   - Custom avatar sprite
@@ -65,7 +60,11 @@
   - Toggle sound effects
   - Volume controls
 
-## 🎮 Nice-to-Have Features
+## 🚀 Medium Priority
+
+- ✅ Balance production rates and pyramid requirements
+  - Current: 10 clicks → 1 stone, 10 stones → 1 pyramid, 10 pyramids → 1 hire
+  - May need tuning for proper game pacing
 
 - [ ] Achievements System
   - First pyramid built
@@ -90,11 +89,11 @@
   - Tutorial/help system
   - Pyramid chain visualizer (tree diagram)
 
-## 🔧 Code Quality & Refactoring
+## 🎮 Nice-to-Have Features
 
-- [ ] Remove duplicate Config objects
-  - CONFIG vs Config in config.js
-  - Consolidate to single object
+
+
+## 🔧 Code Quality & Refactoring
 
 - [ ] Clean up unused worker.js module
   - Currently has old tier-based logic

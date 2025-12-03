@@ -7,17 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### To Do
-- Make AP upgrade purchase buttons functional
-- Add offline progress calculation
-- Add visual feedback for hiring and pyramid creation
-- Add sound effects
-- Add achievements system
-- Add artwork for game elements (avatars, stones, pyramids, alien ship)
+No unreleased changes at this time.
 
 ---
 
-## [0.03] - 2025-01-XX (In Development)
+## [0.03] - 2025-12-02 (Released)
 
 ### Added
 - **Offline Progress System**

@@ -42,6 +42,12 @@ const Prestige = {
     // Add AP to total
     GameState.state.alienPoints = (GameState.state.alienPoints || 0) + apGained;
 
+    // Mark the AP Store as unlocked permanently once player has their first AP
+    if (!GameState.state.apStoreUnlocked && GameState.state.alienPoints > 0) {
+      GameState.state.apStoreUnlocked = true;
+      console.log('AP Store permanently unlocked after prestige');
+    }
+
     // Reset game state (keeps AP and upgrades)
     GameState.prestigeReset();
 

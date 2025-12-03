@@ -32,6 +32,7 @@ const CONFIG = {
   
   // Offline mode
   OFFLINE_SPEED_MULTIPLIER_BASE: 0.4, // 40% of online speed when offline
+  OFFLINE_MIN_TIME_MS: 60000, // Minimum time away (ms) before offline earnings are calculated (default 60s)
   
   // Debug settings
   debug_mode: true,  // Set to false to hide debug menu
