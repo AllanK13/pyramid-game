@@ -28,10 +28,10 @@ const CONFIG = {
   AP_VICTORY_GOAL: 1000000000, // AP needed to win
   
   // AP/Prestige settings
-  ap_base_pyramid_cost: 1000000,  // Minimum pyramids needed to sell for 1 AP
+  ap_base_pyramid_cost: 100000,  // Minimum pyramids needed to sell for 1 AP
   
   // Offline mode
-  OFFLINE_SPEED_MULTIPLIER_BASE: 0.5, // 50% of online speed when offline
+  OFFLINE_SPEED_MULTIPLIER_BASE: 0.4, // 40% of online speed when offline
   
   // Debug settings
   debug_mode: true,  // Set to false to hide debug menu
@@ -50,11 +50,38 @@ const CONFIG = {
   
   // AP Upgrades configuration
   UPGRADES: {
+    hireCapacity: {
+      name: 'Increased Hire Capacity',
+      description: 'Increases the number of investors you can hire (your investors and sub-investors increase proportionally)',
+      baseCost: 50,
+      costScaling: 2.0, // Expensive but accessible for active players
+      baseEffect: 0,
+      effectScaling: 1, // Each level adds +1 to max hires
+      maxLevel: 5 // Max +5 additional hires (total: 1,550 AP)
+    },
+    investorDecayRate: {
+      name: 'Investor Decay Reduction',
+      description: 'Reduce the decay rate for sub-investors (increases max hires at deeper levels AND improves their production speed)',
+      baseCost: 40,
+      costScaling: 2.5, // Steep but manageable for active players
+      baseEffect: -0.02, // Reduces decay by 2% per level (e.g., 20% → 18% → 16%)
+      effectScaling: -0.02,
+      maxLevel: 8, // Max reduction of 16%, bringing decay from 20% down to 4% (total: 24,414 AP)
+    },
+    workerSpeedOnline: {
+      name: 'Investor Speed Training',
+      description: 'Investors sculpt stones faster while online',
+      baseCost: 1,
+      costScaling: 1.05,
+      baseEffect: 0, // Start at 0% bonus
+      effectScaling: 0.01, // Each level adds +1% speed
+      maxLevel: 999999 // Effectively unlimited
+    },
     startingStones: {
       name: 'Starting Sculpted Stones',
       description: 'Start each run with bonus Sculpted Stones',
       baseCost: 1,
-      costScaling: 1,
+      costScaling: 1.0, // Flat cost (no scaling)
       baseEffect: 0,
       effectScaling: 1, // Each level adds +1 stones
       maxLevel: 9
@@ -62,56 +89,29 @@ const CONFIG = {
     startingPyramids: {
       name: 'Legacy Pyramids',
       description: 'Start each run with bonus Pyramids',
-      baseCost: 50,
-      costScaling: 1.2,
+      baseCost: 5,
+      costScaling: 1.1, // Very gentle 10% scaling
       baseEffect: 0,
       effectScaling: 1, // Each level adds +1 pyramids
-      maxLevel: 999999 // Effectively unlimited
-    },
-    hireCapacity: {
-      name: 'Increased Hire Capacity',
-      description: 'Increases the number of investors you can hire',
-      baseCost: 15,
-      costScaling: 1.8,
-      baseEffect: 1,
-      effectScaling: 1, // Each level adds +1 to max hires
-      maxLevel: 10
-    },
-    workerSpeedOnline: {
-      name: 'Investor Speed Training',
-      description: 'Investors sculpt stones faster while online',
-      baseCost: 12,
-      costScaling: 1.6,
-      baseEffect: 0.01, // 1% speed increase per level
-      effectScaling: 0.01,
-      maxLevel: 50
+      maxLevel: 500 // Practical limit
     },
     workerSpeedOffline: {
       name: 'Offline Efficiency',
       description: 'Improve investor speed while offline',
-      baseCost: 18,
-      costScaling: 1.7,
-      baseEffect: 0.05, // 5% of online speed per level (added to base 50%)
+      baseCost: 200,
+      costScaling: 3.0, // Very expensive - major investment for casual players
+      baseEffect: 0.05, // 5% of online speed per level (added to base 40%)
       effectScaling: 0.05,
-      maxLevel: 30
+      maxLevel: 8 // Max: 40% + 40% = 80% offline efficiency (total: 218,600 AP)
     },
     apGainBonus: {
       name: 'Alien Bargaining',
       description: 'Gain more AP when selling pyramids',
-      baseCost: 100,
-      costScaling: 2.2,
-      baseEffect: 0.1, // 10% more AP per level
-      effectScaling: 0.1,
-      maxLevel: 20
-    },
-    investorDecayRate: {
-      name: 'Investor Decay Reduction',
-      description: 'Reduce the decay rate for sub-investors (improves deep pyramid efficiency)',
-      baseCost: 30,
-      costScaling: 2.5,
-      baseEffect: -0.02, // Reduces decay by 2% per level (e.g., 20% → 18% → 16%)
-      effectScaling: -0.02,
-      maxLevel: 8, // Max reduction of 16%, bringing decay from 20% down to 4%
+      baseCost: 10,
+      costScaling: 1.4, // Gentle scaling - early game investment
+      baseEffect: 0, // Start at 0% bonus
+      effectScaling: 0.1, // Each level adds +10%
+      maxLevel: 20 // Cap at +200% AP (3x total)
     }
   },
   
@@ -171,7 +171,8 @@ CONFIG.getEffectiveDecayRate = function(apUpgrades) {
 // Get max hires for a specific tier (applies decay to tier 1 only)
 CONFIG.getMaxHiresForTier = function(tier, apUpgrades = {}) {
   const baseCapacity = this.BASE_HIRE_CAPACITY || 5;
-  const hireCapacityBonus = apUpgrades?.hireCapacity || 0;
+  const hireCapacityLevel = apUpgrades?.hireCapacity || 0;
+  const hireCapacityBonus = this.getUpgradeEffect('hireCapacity', hireCapacityLevel);
   
   // Tier 1 (the player's direct hires) gets decay applied
   if (tier === 1) {

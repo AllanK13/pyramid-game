@@ -3,25 +3,47 @@
 ## 📋 Version 0.03 Roadmap
 
 ### High Priority (For v0.03)
-- [ ] **Make AP Upgrades Purchasable**
-  - Add click handlers to purchase buttons
-  - Deduct AP cost and increment level
-  - Apply effects immediately
-  - Show purchase confirmation/feedback
-  - Update UI to reflect new bonuses
+- [x] **Make AP Upgrades Purchasable**
+  - ✅ Add click handlers to purchase buttons
+  - ✅ Deduct AP cost and increment level
+  - ✅ Apply effects immediately
+  - ✅ Show purchase confirmation/feedback
+  - ✅ Update UI to reflect new bonuses
+  - ✅ Fix upgrade effect calculations (hireCapacity, workerSpeedOnline)
 
-- [ ] **Offline Progress System**
-  - Track time away from game (lastUpdateTime)
-  - Calculate production during offline period
-  - Apply offline speed multiplier (50% base + upgrades)
-  - Show "Welcome Back" summary popup with gains
-  - Cap offline time to 24 hours max
+- [x] **Offline Progress System**
+  - ✅ Track time away from game (lastSaveTime)
+  - ✅ Calculate production during offline period
+  - ✅ Apply offline speed multiplier (50% base + upgrades)
+  - ✅ Show "Welcome Back" summary popup with gains
+  - ✅ Cap offline time to 24 hours max
+  - ✅ Simulates worker production accurately
+  - ✅ Activated `workerSpeedOffline` upgrade
+
+- [ ] **Implement Remaining Upgrade Functionality**
+  - [ ] `startingStones` - Give bonus sculpted stones on prestige reset
+  - [ ] `startingPyramids` - Give bonus pyramids on prestige reset
+  - ✅ `apGainBonus` - Already implemented in Prestige.calculateAPGain()
+  - ✅ `workerSpeedOffline` - Applied in offline calculations
+
+- [x] **Economy Balancing**
+  - ✅ Adjusted prestige requirement to 100,000 pyramids
+  - ✅ Set AP upgrade costs based on power analysis
+  - ✅ Balanced for 1-week completion timeline
+  - ✅ Victory goal set to 1 billion pyramids
+
+- [x] **Progressive UI Reveals**
+  - ✅ Hide AP Store tab until 100k pyramids
+  - ✅ Show AP displays after first prestige
+  - ✅ Dynamic investor rows (6-10) based on hireCapacity
+
+- Fix AP Store visibility upon prestige
 
 - [ ] **Visual/Audio Feedback**
-  - Add particle effects when pyramids complete
-  - Add notification when investor hired
-  - Add sound effects (optional, can be toggled)
-  - Flash/highlight when milestone reached
+  - [ ] Add particle effects when pyramids complete
+  - [ ] Add notification when investor hired
+  - [ ] Add sound effects (optional, can be toggled)
+  - [ ] Flash/highlight when milestone reached
 
 ## 🚀 Medium Priority
 

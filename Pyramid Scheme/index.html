@@ -109,6 +109,10 @@
     .top-tab.active span.dot {
       background: var(--accent);
     }
+
+    .top-tab.hidden {
+      display: none;
+    }
     /* #endregion */
 
     /* #region MAIN CONTENT AREA & TAB SCREENS */
@@ -150,6 +154,33 @@
       align-items: flex-end;
       justify-content: center;
       padding-bottom: 12px;
+    }
+
+    .ap-display-badge {
+      position: absolute;
+      top: 12px;
+      right: 16px;
+      background: rgba(102, 126, 234, 0.3);
+      border: 2px solid rgba(245, 199, 106, 0.6);
+      border-radius: 8px;
+      padding: 8px 16px;
+      display: none;
+      align-items: center;
+      gap: 8px;
+      font-size: 16px;
+      color: var(--accent);
+      font-weight: 700;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      z-index: 10;
+    }
+
+    .ap-display-badge.visible {
+      display: flex;
+    }
+
+    .ap-display-icon {
+      font-size: 20px;
     }
 
     /* Sun in the sky */
@@ -430,7 +461,6 @@
 
     #workers-scroll {
       width: 100%;
-      height: 100%;
       display: flex;
       flex-direction: column;
     }
@@ -1102,6 +1132,145 @@
     }
     /* #endregion */
 
+    /* #region OFFLINE PROGRESS POPUP */
+    .popup-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      opacity: 1;
+      transition: opacity 0.3s ease-out;
+    }
+
+    .popup-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .popup-container {
+      background: linear-gradient(135deg, var(--card-bg), rgba(18, 21, 40, 0.95));
+      border: 2px solid var(--accent);
+      border-radius: 16px;
+      padding: 24px;
+      max-width: 500px;
+      width: 90%;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 30px rgba(245, 199, 106, 0.3);
+      animation: popup-appear 0.3s ease-out;
+    }
+
+    @keyframes popup-appear {
+      from {
+        transform: scale(0.9);
+        opacity: 0;
+      }
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .popup-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .popup-icon {
+      font-size: 36px;
+    }
+
+    .popup-header h2 {
+      font-size: 24px;
+      color: var(--accent);
+      margin: 0;
+    }
+
+    .popup-content {
+      margin-bottom: 20px;
+    }
+
+    .popup-message {
+      font-size: 16px;
+      color: var(--text-main);
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
+    .offline-stats {
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .offline-stat {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .offline-stat:last-child {
+      border-bottom: none;
+    }
+
+    .offline-stat-label {
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    .offline-stat-value {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .offline-stat-value.highlight {
+      color: var(--accent);
+      font-size: 22px;
+    }
+
+    .offline-note {
+      font-size: 13px;
+      color: var(--text-muted);
+      background: rgba(245, 199, 106, 0.1);
+      border-left: 3px solid var(--accent);
+      padding: 12px;
+      border-radius: 6px;
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    .popup-button {
+      width: 100%;
+      padding: 14px;
+      background: var(--btn-primary-bg);
+      color: var(--btn-primary-fg);
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .popup-button:hover {
+      background: var(--btn-primary-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(245, 199, 106, 0.4);
+    }
+
+    .popup-button:active {
+      transform: translateY(0);
+    }
+    /* #endregion */
+
     /* #region ALIEN ARRIVAL BUTTON */
     #alien-arrival-backdrop {
       display: none;
@@ -1109,7 +1278,7 @@
 
     #alien-arrival-area {
       position: absolute;
-      top: 60%;
+      top: 70%;
       left: 50%;
       transform: translate(-50%, -50%);
       text-align: center;
@@ -1260,7 +1429,7 @@
         <button class="top-tab" data-tab-target="stats">
           <span class="dot"></span> Stats
         </button>
-        <button class="top-tab" data-tab-target="ap-store">
+        <button class="top-tab hidden" data-tab-target="ap-store" id="ap-store-tab">
           <span class="dot"></span> AP Store
         </button>
       </div>
@@ -1273,6 +1442,13 @@
       <section id="production-screen" class="tab-screen active">
         <!-- SKY SECTION -->
         <section id="sky-ap" class="game-section sky-background">
+          <!-- AP Display Badge -->
+          <div class="ap-display-badge" id="production-ap-badge">
+            <span class="ap-display-icon">👽</span>
+            <span id="production-ap-amount">0</span>
+            <span>AP</span>
+          </div>
+          
           <!-- Alien Arrival Area - positioned in sky -->
           <div id="alien-arrival-area">
             <button id="btn-prestige">
@@ -1568,30 +1744,30 @@
               <button class="ap-upgrade-buy">Purchase</button>
             </div>
 
-            <div class="ap-upgrade-card" data-upgrade-id="workerSpeedOnline">
-              <div class="ap-upgrade-title">Investor Speed Training</div>
-              <div class="ap-upgrade-effect">
-                Investors sculpt stones <span class="effect-value">+1%</span> faster (while online).
-              </div>
-              <div class="ap-upgrade-cost">
-                Cost: <span class="ap-cost">?</span> AP
-              </div>
-              <div class="ap-upgrade-level">
-                Level: <span class="ap-level">0</span>
-              </div>
-              <button class="ap-upgrade-buy">Purchase</button>
-            </div>
-
             <div class="ap-upgrade-card" data-upgrade-id="investorDecayRate">
               <div class="ap-upgrade-title">Investor Decay Reduction</div>
               <div class="ap-upgrade-effect">
-                Reduce sub-investor tier decay by <span class="effect-value">2%</span> (currently <span id="current-decay-rate">20%</span>).
+                Reduce sub-investor tier decay by <span class="effect-value">2%</span> (currently <span id="current-decay-rate">20%</span>). Increases max hires at deeper levels AND improves their production speed.
               </div>
               <div class="ap-upgrade-cost">
                 Cost: <span class="ap-cost">?</span> AP
               </div>
               <div class="ap-upgrade-level">
                 Level: <span class="ap-level">0</span>/8
+              </div>
+              <button class="ap-upgrade-buy">Purchase</button>
+            </div>
+
+            <div class="ap-upgrade-card" data-upgrade-id="workerSpeedOnline">
+              <div class="ap-upgrade-title">Investor Speed Training</div>
+              <div class="ap-upgrade-effect">
+                Investors sculpt stones <span class="effect-value">+1%</span> faster.
+              </div>
+              <div class="ap-upgrade-cost">
+                Cost: <span class="ap-cost">?</span> AP
+              </div>
+              <div class="ap-upgrade-level">
+                Level: <span class="ap-level">0</span>
               </div>
               <button class="ap-upgrade-buy">Purchase</button>
             </div>
@@ -1638,6 +1814,12 @@
       <section id="stats-screen" class="tab-screen">
         <div id="stats-content">
           <h2 class="stats-title">📊 Game Statistics</h2>
+          
+          <!-- AP Display Section -->
+          <div class="stats-section" id="stats-ap-section" style="display: none;">
+            <div class="stats-label">👽 Alien Points</div>
+            <div class="stats-value" id="stats-ap-amount">0</div>
+          </div>
           
           <div class="stats-section">
             <div class="stats-label">Total Pyramids</div>
@@ -1734,7 +1916,7 @@
       <button class="debug-btn" id="debug-add-stones">+9 Sculpted Stones</button>
       <button class="debug-btn" id="debug-add-pyramids">+10 Pyramids</button>
       <button class="debug-btn" id="debug-add-many-pyramids">+1,000,000 Pyramids</button>
-      <button class="debug-btn" id="debug-add-ap">+1000 AP</button>
+      <button class="debug-btn" id="debug-add-ap">+1,000,000 AP</button>
       <hr style="margin: 8px 0; border-color: rgba(255,255,255,0.2);">
       <button class="debug-btn" id="debug-export-save">📤 Export Save</button>
       <button class="debug-btn" id="debug-import-save">📥 Import Save</button>
@@ -1743,6 +1925,36 @@
   </div>
   <!-- Hidden file input for import -->
   <input type="file" id="import-file-input" accept=".txt" style="display: none;">
+  <!-- #endregion -->
+
+  <!-- #region OFFLINE PROGRESS POPUP -->
+  <div id="offline-progress-popup" class="popup-overlay hidden">
+    <div class="popup-container">
+      <div class="popup-header">
+        <span class="popup-icon">👋</span>
+        <h2>Welcome Back!</h2>
+      </div>
+      <div class="popup-content">
+        <p class="popup-message">While you were away, your investors kept working...</p>
+        <div class="offline-stats">
+          <div class="offline-stat">
+            <div class="offline-stat-label">Time Away:</div>
+            <div class="offline-stat-value" id="offline-time-away">-</div>
+          </div>
+          <div class="offline-stat">
+            <div class="offline-stat-label">Pyramids Earned:</div>
+            <div class="offline-stat-value highlight" id="offline-pyramids-gained">0</div>
+          </div>
+          <div class="offline-stat">
+            <div class="offline-stat-label">Offline Efficiency:</div>
+            <div class="offline-stat-value" id="offline-efficiency">50%</div>
+          </div>
+        </div>
+        <p class="offline-note">💡 Offline production runs at reduced efficiency. Upgrade "Offline Efficiency" in the AP Store to improve this!</p>
+      </div>
+      <button id="offline-popup-close" class="popup-button">Continue</button>
+    </div>
+  </div>
   <!-- #endregion -->
 
   <!-- #region GAME MODULES - JAVASCRIPT -->
@@ -1770,9 +1982,9 @@
       }
       
       // Try to load saved game
-      const loaded = SaveLoad.load();
+      const loadResult = SaveLoad.load();
       
-      if (!loaded) {
+      if (!loadResult || !loadResult.loaded) {
         // New game - initialize state
         if (typeof GameState !== 'undefined' && GameState.init) {
           GameState.init();
@@ -1780,6 +1992,14 @@
         }
       } else {
         console.log('Saved game loaded');
+        
+        // Show offline progress popup if there was time away
+        if (loadResult.offlineData) {
+          // Show popup after a short delay to ensure UI is ready
+          setTimeout(() => {
+            UI.showOfflineProgressPopup(loadResult.offlineData);
+          }, 500);
+        }
       }
       
       console.log('Current pyramids:', GameState.state.pyramids);
@@ -1851,9 +2071,9 @@
       });
       
       document.getElementById('debug-add-ap').addEventListener('click', function() {
-        GameState.state.alienPoints = (GameState.state.alienPoints || 0) + 1000;
+        GameState.state.alienPoints = (GameState.state.alienPoints || 0) + 1000000;
         UI.update();
-        console.log('Added 1000 AP, total:', GameState.state.alienPoints);
+        console.log('Added 1,000,000 AP, total:', GameState.state.alienPoints);
       });
       
       // Export save button

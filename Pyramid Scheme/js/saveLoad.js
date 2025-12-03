@@ -47,7 +47,7 @@ const SaveLoad = {
       
       if (!saveString) {
         console.log('No save file found');
-        return false;
+        return { loaded: false, offlineData: null };
       }
 
       const saveData = JSON.parse(saveString);
@@ -79,10 +79,23 @@ const SaveLoad = {
       console.log(`   Pyramids: ${GameState.state.pyramids}`);
       console.log(`   Upgrades:`, GameState.state.apUpgrades);
       
-      return true;
+      // Calculate offline progress
+      const now = Date.now();
+      const lastSave = saveData.lastSaveTime || now;
+      const timeAway = now - lastSave;
+      
+      // Only calculate offline progress if away for more than 1 minute
+      let offlineData = null;
+      if (timeAway > 60000 && GameState.state.workers) {
+        console.log(`⏰ Time away: ${Math.floor(timeAway / 1000 / 60)} minutes`);
+        offlineData = GameEngine.calculateOfflineProgress(timeAway);
+        console.log(`   Offline pyramids gained: ${offlineData.pyramidsGained}`);
+      }
+      
+      return { loaded: true, offlineData: offlineData };
     } catch (error) {
       console.error('❌ Load failed:', error);
-      return false;
+      return { loaded: false, offlineData: null };
     }
   },
 

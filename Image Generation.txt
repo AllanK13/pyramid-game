@@ -1,0 +1,65 @@
+Granite Stone
+
+1. A rough, irregular granite stone block, uncarved and natural, grey color with brown speckles, rocky texture, mineral surface, game asset, flat lighting, white background, isometric view, pixel art style OR realistic 3D render
+2. A rough granite stone block with slight chisel marks on one corner, beginning to show flat surfaces, mostly irregular shape, grey stone with brown speckles, game asset, white background, isometric view
+3. A partially carved granite block with two flat surfaces meeting at a corner, still rough on other sides, grey stone being shaped into cube, game asset, white background, isometric view
+4. A granite stone block half-carved into cube shape, three flat surfaces visible, remaining sides still rough and natural, grey carved stone, game asset, white background, isometric view
+5. A granite block mostly carved with four flat surfaces, becoming cubic, some rough edges remain, grey sculptured stone block, game asset, white background, isometric view
+6. A granite cube 50% complete, five smooth flat surfaces, one rough natural side, clean edges forming, grey carved stone block, game asset, white background, isometric view
+7. A nearly complete granite cube, six sides mostly flat, minor rough patches, well-defined edges and corners, grey stone block, game asset, white background, isometric view
+8. An almost perfect granite cube, all sides flat with slight texture variations, clean edges, nearly finished carved stone block, grey, game asset, white background, isometric view
+9. A nearly flawless granite cube, smooth flat surfaces, crisp edges and corners, minimal imperfections, refined carved stone block, grey, game asset, white background, isometric view
+10. An almost perfect granite cube, pristine flat surfaces, sharp precise edges, tiny finishing touches needed, expertly carved stone block, grey, game asset, white background, isometric view
+11. A perfect granite cube, flawless smooth surfaces, precise 90-degree edges and corners, masterfully carved stone block, uniform grey color, game asset, white background, isometric view, clean geometric shape
+
+-- style consistent, dimensions: 1024x1024, game asset style for casual 8-bit pixelated style desert-themed game, clean outlines
+
+Stone Pile
+
+1. Empty stone workshop floor, smooth grey surface, ready for sculpted stones, game asset, white background, isometric view
+2. A single perfect grey granite cube sitting alone on floor, small stone block, game asset, white background, isometric view
+3. Two perfect grey granite cubes stacked or placed beside each other, small stone blocks beginning to form a pile, game asset, white background, isometric view
+4. Three perfect grey granite cubes arranged in a small pile, stone blocks clustered together, game asset, white background, isometric view
+5. Four perfect grey granite cubes in a small pile formation, stone blocks stacked and grouped, game asset, white background, isometric view
+6. Five perfect grey granite cubes in a medium pile, stone blocks arranged in compact cluster, game asset, white background, isometric view
+7. Six perfect grey granite cubes in a growing pile, stone blocks stacked in organized formation, game asset, white background, isometric view
+8. Seven perfect grey granite cubes in a substantial pile, stone blocks building upward, game asset, white background, isometric view
+9. Eight perfect grey granite cubes in a large pile, stone blocks stacked high, nearly ready for pyramid construction, game asset, white background, isometric view
+10. Nine perfect grey granite cubes in a tall organized pile, stone blocks stacked and ready, one away from pyramid, game asset, white background, isometric view
+
+
+-- style consistent, dimensions: 1024x1024, game asset style for casual 8-bit pixelated style desert-themed game, clean outlines
+
+Pyramid
+1. A small ancient Egyptian pyramid made of grey granite stone blocks, geometric pyramid structure, smooth surfaces, golden capstone on top, desert monument, game asset, white background, isometric view, iconic shape
+
+
+For Backgrounds:
+
+Generate at 1920x1080 or wider for full-screen coverage
+Use horizontal panoramic aspect ratios
+Keep it simple and clean so game UI remains readable
+Consider blur or low detail so it stays in background
+
+2. Clear bright blue sky gradient from deep blue at top to light cyan at bottom, daytime desert sky, peaceful atmosphere, no clouds, simple gradient background, game environment, wide panoramic view
+3. Egyptian desert sky at golden hour, soft blue to warm orange gradient, peaceful sunset atmosphere, minimal clouds, simple background, ancient times, wide panoramic game environment
+
+4. Sandy desert floor, golden tan sand dunes, smooth rolling hills in distance, endless Sahara desert landscape, warm beige and gold colors, ancient Egypt setting, game background, wide panoramic view, flat horizon
+5. Ancient Egyptian desert landscape, golden sand dunes stretching to horizon, warm tan and ochre colors, scattered small rocks, distant mountains silhouette, timeless desert vista, game background panorama
+
+
+For Alien Pyramid:
+
+Size similar to regular pyramid but more ornate
+Needs to stand out and look special/rare
+Should glow or emit light to draw attention
+Consider animated glow (can be done with CSS)
+Match the color scheme (purples/blues work well with golden desert)
+
+6. Ancient mysterious pyramid made of translucent crystal and obsidian, glowing with ethereal purple and blue energy, alien hieroglyphs carved into surface, mystical sci-fi monument, magical aura, hovering slightly above ground, cosmic power radiating, game asset, white background, isometric view
+7. Futuristic alien pyramid structure, smooth black obsidian surface with glowing neon blue circuit patterns, extraterrestrial technology, holographic symbols floating around it, advanced civilization artifact, pulsing with energy, game asset, white background, isometric view
+8. Crystalline pyramid monument, translucent purple crystal material, glowing from within, ancient alien runes etched on surface, supernatural energy emanating, otherworldly artifact, cosmic power source, levitating pyramid, game asset, white background, isometric view
+9. Hybrid pyramid combining Egyptian architecture with alien technology, golden stone base with glowing blue energy veins, mysterious hieroglyphs mixed with holographic displays, portal to another dimension at apex, mystical sci-fi monument, game asset, white background, isometric view
+
+Small sleek alien spacecraft hovering in sky, metallic disc shape with glowing blue lights underneath, futuristic UFO design, simple clean silhouette, descending to collect pyramids, game asset, white background, slight glow effect
+

@@ -20,23 +20,63 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.03] - 2025-01-XX (In Development)
 
 ### Added
+- **Offline Progress System**
+  - Calculates pyramids earned while away from game
+  - Runs at 50% efficiency (base) with upgradeable bonus via `workerSpeedOffline`
+  - Simulates worker production accurately including sub-worker hiring
+  - Capped at 24 hours maximum offline time
+  - "Welcome Back" popup displays time away, pyramids earned, and efficiency
+  - Only activates if away for more than 1 minute
+
+- **AP Upgrade Purchase System**
+  - Purchase buttons now functional for all AP upgrades
+  - Deducts AP cost and increments upgrade level
+  - UI updates to show current level, effects, and costs
+  - Button shows "MAX LEVEL" when upgrade is maxed out
+  - Auto-save after each purchase
+
 - **Debug Menu Improvements**
   - Debug menu is now collapsible with click-to-toggle functionality
   - Arrow indicator (▼) shows collapsed/expanded state with smooth rotation animation
   - Menu content smoothly animates in/out when toggled
   - Saves screen space when collapsed while keeping menu accessible
 
+- **Progressive UI Reveals**
+  - AP Store tab hidden until player achieves 100,000 pyramids
+  - AP displays on Production and Stats screens appear after first prestige
+
+- **Dynamic Investor Rows**
+  - Investor slots 6-10 now dynamically appear based on `hireCapacity` upgrade level
+  - Maximum 10 total investor slots (5 base + 5 from upgrades)
+
 ### Changed
+- **Economy Rebalancing for 1-Week Completion**
+  - Prestige requirement lowered from 1,000,000 to 100,000 pyramids
+  - AP upgrade costs and scaling adjusted based on power analysis:
+    - `hireCapacity`: 100 AP base, 2.5x scaling (most powerful upgrade)
+    - `investorDecayRate`: 50 AP base, 3.0x scaling (most powerful upgrade)
+    - `workerSpeedOnline`: 1 AP base, 1.05x scaling (linear progression)
+    - `apGainBonus`: 25 AP base, 1.8x scaling, max 50 levels
+    - `startingStones`: 1 AP flat cost (no scaling)
+    - `startingPyramids`: 5 AP base, 1.1x scaling
+  - Victory goal set to 1 billion pyramids (achievable in ~168 hours with optimal play)
+  
+- **AP Store Upgrade Order**
+  - Reordered to: Hire Capacity → Decay Reduction → Speed Training
+  - More intuitive progression from most to least impactful upgrades
+
 - Version bumped to 0.03
 - Debug menu now starts expanded by default but can be collapsed
 
 ### Fixed
+- **AP upgrade effects now apply correctly**
+  - `hireCapacity` upgrade now properly increases max investor hires
+  - `workerSpeedOnline` upgrade now correctly boosts worker production speed
+  - `workerSpeedOffline` upgrade now affects offline calculations
+  - All upgrades now use `CONFIG.getUpgradeEffect()` instead of raw level values
 - Debug menu collapse toggle now works correctly
 - Arrow indicator properly rotates on click
-
-### In Progress
-- AP upgrade purchase functionality
-- Offline progress calculation
+- Investor 7+ hiring buttons now work (event listeners properly attached to dynamic rows)
 
 ---
 

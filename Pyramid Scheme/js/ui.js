@@ -67,9 +67,15 @@ const UI = {
   },
 
   setupWorkerHireButtons() {
-    for (let i = 1; i <= 5; i++) {
+    // Get maximum possible investors based on upgrades
+    const maxInvestors = this.getMaxInvestorSlots();
+    
+    for (let i = 1; i <= maxInvestors; i++) {
       const hireBtn = document.getElementById(`btn-hire-worker${i}`);
-      if (hireBtn) {
+      if (hireBtn && !hireBtn.dataset.listenerAttached) {
+        // Mark as having listener attached to avoid duplicates
+        hireBtn.dataset.listenerAttached = 'true';
+        
         hireBtn.addEventListener('click', () => {
           const workerId = i.toString();
           
@@ -118,6 +124,77 @@ const UI = {
         });
       }
     }
+  },
+
+  getMaxInvestorSlots() {
+    const baseCapacity = CONFIG.BASE_HIRE_CAPACITY || 5;
+    const hireCapacityLevel = GameState.state.apUpgrades?.hireCapacity || 0;
+    const hireCapacityBonus = CONFIG.getUpgradeEffect('hireCapacity', hireCapacityLevel);
+    return baseCapacity + hireCapacityBonus;
+  },
+
+  ensureInvestorRowsExist() {
+    const workersScroll = document.getElementById('workers-scroll');
+    if (!workersScroll) return;
+    
+    const maxInvestors = this.getMaxInvestorSlots();
+    const existingRows = workersScroll.querySelectorAll('.worker-row');
+    const existingCount = existingRows.length;
+    
+    // Create additional rows if needed
+    if (existingCount < maxInvestors) {
+      for (let i = existingCount + 1; i <= maxInvestors; i++) {
+        const pyramidsRequired = i * 10;
+        const workerRow = this.createInvestorRow(i, pyramidsRequired);
+        workersScroll.appendChild(workerRow);
+      }
+      
+      // Only re-setup hire buttons if we added new rows
+      this.setupWorkerHireButtons();
+    }
+  },
+
+  createInvestorRow(investorNum, pyramidsRequired) {
+    const div = document.createElement('div');
+    div.className = 'worker-row locked';
+    div.setAttribute('data-worker', investorNum);
+    div.setAttribute('data-unlock-requirement', pyramidsRequired);
+    
+    div.innerHTML = `
+      <div class="worker-section worker-section-hire">
+        <button class="worker-hire-btn" id="btn-hire-worker${investorNum}">
+          Hire
+        </button>
+      </div>
+      <div class="worker-section worker-section-avatar">
+        <div class="worker-avatar">
+          <span class="worker-avatar-label">Investor ${investorNum}</span>
+        </div>
+      </div>
+      <div class="worker-section-connector left">
+        <span class="connector-text">who recruited</span>
+      </div>
+      <div class="worker-section worker-section-hires">
+        <div class="worker-hires-box">
+          <span class="worker-hires-count" id="worker${investorNum}-hires">0</span>
+        </div>
+        <span class="worker-hires-label">Investors</span>
+      </div>
+      <div class="worker-section-connector right">
+        <span class="connector-text">and combined made</span>
+      </div>
+      <div class="worker-section worker-section-pyramids">
+        <div class="worker-pyramids-box">
+          <span class="worker-pyramids-count" id="worker${investorNum}-pyramids">0</span>
+        </div>
+        <span class="worker-pyramids-label">Pyramids</span>
+      </div>
+      <div class="worker-locked-overlay">
+        <span class="locked-text">🔒 Locked (need ${pyramidsRequired} 🔺)</span>
+      </div>
+    `;
+    
+    return div;
   },
 
   setupPrestigeButton() {
@@ -220,9 +297,13 @@ const UI = {
 
   updateWorkerUnlockStates() {
     const pyramidCount = GameState.state.pyramids || 0;
+    const maxInvestors = this.getMaxInvestorSlots();
+    
+    // Ensure all investor rows exist
+    this.ensureInvestorRowsExist();
     
     // Check each worker row
-    for (let i = 1; i <= 5; i++) {
+    for (let i = 1; i <= maxInvestors; i++) {
       const workerRow = document.querySelector(`.worker-row[data-worker="${i}"]`);
       if (!workerRow) continue;
       
@@ -348,9 +429,13 @@ const UI = {
     // Update AP
     var apBalance = document.getElementById('ap-balance-amount');
     if (apBalance) apBalance.textContent = state.alienPoints || 0;
+    
+    // Update AP displays on Production and Stats screens
+    this.updateAPDisplays();
 
     // Update worker counts with recursive totals
-    for (let i = 1; i <= 5; i++) {
+    const maxInvestors = this.getMaxInvestorSlots();
+    for (let i = 1; i <= maxInvestors; i++) {
       const workerId = i.toString();
       const worker = GameState.state.workers?.[workerId];
       
@@ -383,13 +468,88 @@ const UI = {
 
     // Update prestige button visibility and values
     this.updatePrestigeButton();
+    
+    // Update AP Store tab visibility
+    this.updateAPStoreTabVisibility();
+  },
+
+  updateAPStoreTabVisibility() {
+    const pyramids = GameState.state.pyramids || 0;
+    const apStoreTab = document.getElementById('ap-store-tab');
+    
+    if (apStoreTab && pyramids >= 100000) {
+      // Reveal the AP Store tab once player reaches 100k pyramids
+      if (apStoreTab.classList.contains('hidden')) {
+        apStoreTab.classList.remove('hidden');
+        console.log('🎉 AP Store unlocked!');
+      }
+    }
+  },
+
+  // Show offline progress popup
+  showOfflineProgressPopup(offlineData) {
+    if (!offlineData || offlineData.pyramidsGained <= 0) return;
+    
+    const popup = document.getElementById('offline-progress-popup');
+    if (!popup) return;
+    
+    // Format time away
+    const timeAwaySeconds = Math.floor(offlineData.timeAway / 1000);
+    let timeAwayText = '';
+    if (timeAwaySeconds < 60) {
+      timeAwayText = `${timeAwaySeconds} seconds`;
+    } else if (timeAwaySeconds < 3600) {
+      timeAwayText = `${Math.floor(timeAwaySeconds / 60)} minutes`;
+    } else {
+      const hours = Math.floor(timeAwaySeconds / 3600);
+      const minutes = Math.floor((timeAwaySeconds % 3600) / 60);
+      timeAwayText = `${hours}h ${minutes}m`;
+    }
+    
+    // Update popup content
+    document.getElementById('offline-time-away').textContent = timeAwayText;
+    document.getElementById('offline-pyramids-gained').textContent = this.formatNumber(offlineData.pyramidsGained);
+    document.getElementById('offline-efficiency').textContent = `${Math.floor(offlineData.offlineMultiplier * 100)}%`;
+    
+    // Show popup
+    popup.classList.remove('hidden');
+    
+    // Close button
+    const closeBtn = document.getElementById('offline-popup-close');
+    if (closeBtn) {
+      closeBtn.onclick = () => {
+        popup.classList.add('hidden');
+      };
+    }
+  },
+
+  updateAPDisplays() {
+    const ap = GameState.state.alienPoints || 0;
+    
+    // Show AP displays if player has earned any AP
+    if (ap > 0) {
+      // Production screen AP badge
+      const productionBadge = document.getElementById('production-ap-badge');
+      const productionAmount = document.getElementById('production-ap-amount');
+      if (productionBadge && !productionBadge.classList.contains('visible')) {
+        productionBadge.classList.add('visible');
+      }
+      if (productionAmount) productionAmount.textContent = ap;
+      
+      // Stats screen AP section
+      const statsSection = document.getElementById('stats-ap-section');
+      const statsAmount = document.getElementById('stats-ap-amount');
+      if (statsSection) statsSection.style.display = '';
+      if (statsAmount) statsAmount.textContent = ap;
+    }
   },
 
   updatePyramidsPerSecond() {
     let totalStonesPerSecond = 0;
+    const maxInvestorsPPS = this.getMaxInvestorSlots();
     
     // Calculate production from all worker tiers
-    for (let tier = 1; tier <= 5; tier++) {
+    for (let tier = 1; tier <= maxInvestorsPPS; tier++) {
       const workerId = tier.toString();
       const worker = GameState.state.workers?.[workerId];
       
@@ -455,7 +615,8 @@ const UI = {
 
     // Calculate total pyramids
     let totalPyramids = state.pyramids || 0;
-    for (let i = 1; i <= 5; i++) {
+    const maxInvestors = this.getMaxInvestorSlots();
+    for (let i = 1; i <= maxInvestors; i++) {
       const worker = state.workers?.[i.toString()];
       if (worker && worker.unlocked) {
         totalPyramids += this.getTotalPyramidsRecursive(worker);
@@ -463,13 +624,16 @@ const UI = {
     }
 
     // Calculate pyramids per second (rough estimate)
-    const speedMultiplier = 1.0 + (GameState.state.apUpgrades?.workerSpeedOnline || 0) * 0.01;
+    const workerSpeedLevel = GameState.state.apUpgrades?.workerSpeedOnline || 0;
+    const speedBonus = CONFIG.getUpgradeEffect('workerSpeedOnline', workerSpeedLevel);
+    const speedMultiplier = 1.0 + speedBonus;
     const workerClickInterval = CONFIG.WORKER_CLICK_INTERVAL || 1000;
     const clicksPerSecond = 1000 / workerClickInterval;
     
     // Count total active workers (simplified)
     let totalWorkers = 0;
-    for (let i = 1; i <= 5; i++) {
+    const maxInvestorsForStats = this.getMaxInvestorSlots();
+    for (let i = 1; i <= maxInvestorsForStats; i++) {
       const worker = state.workers?.[i.toString()];
       if (worker && worker.unlocked) {
         totalWorkers += this.countActiveWorkersRecursive(worker);
@@ -514,8 +678,9 @@ const UI = {
     const investorsList = document.getElementById('stats-investors-list');
     if (investorsList) {
       investorsList.innerHTML = '';
+      const maxInvestorsForList = this.getMaxInvestorSlots();
       
-      for (let tier = 1; tier <= 5; tier++) {
+      for (let tier = 1; tier <= maxInvestorsForList; tier++) {
         const workerId = tier.toString();
         const worker = state.workers?.[workerId];
         
@@ -576,7 +741,8 @@ const UI = {
 
     // Calculate total pyramids
     let totalPyramids = state.pyramids || 0;
-    for (let i = 1; i <= 5; i++) {
+    const maxInvestorsDebug = this.getMaxInvestorSlots();
+    for (let i = 1; i <= maxInvestorsDebug; i++) {
       const worker = state.workers?.[i.toString()];
       if (worker && worker.unlocked) {
         totalPyramids += worker.pyramids || 0;
@@ -606,8 +772,9 @@ const UI = {
     const investorsList = document.getElementById('debug-investors-list');
     if (investorsList) {
       let html = '';
+      const maxInvestorsDebugList = this.getMaxInvestorSlots();
       
-      for (let i = 1; i <= 5; i++) {
+      for (let i = 1; i <= maxInvestorsDebugList; i++) {
         const workerId = i.toString();
         const worker = state.workers?.[workerId];
         
@@ -649,6 +816,9 @@ const UI = {
 
   // Update AP upgrade cards
   updateAPUpgradeCards() {
+    // Ensure investor rows exist based on current hireCapacity
+    this.ensureInvestorRowsExist();
+    
     const cards = document.querySelectorAll('.ap-upgrade-card');
     cards.forEach(card => {
       const upgradeId = card.getAttribute('data-upgrade-id');
