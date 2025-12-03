@@ -1,8 +1,8 @@
 # Pyramid Scheme - Development TODO
 
-## 📋 Version 0.04 Roadmap
+## 📋 Version 0.11 Roadmap
 
-### High Priority (For v0.03)
+### High Priority (For v0.11)
 
 - [ ] **Visual/Audio Feedback**
   - [ ] Add particle effects when pyramids complete
@@ -74,7 +74,7 @@
 - [ ] Large numbers (e^notation) may not display consistently
 - [ ] Deep pyramid chains (10+ levels) may cause performance issues
 
-## 🎯 Future Versions (v0.04+)
+## 🎯 Future Versions (v1.0+)
 
 - [ ] Multiple prestige layers
 - [ ] Automation upgrades (auto-click, auto-hire, etc.)
@@ -86,19 +86,6 @@
 ---
 
 ## Development Notes
-
-### Current Version: 0.03
-- Focus: AP upgrades functionality + offline progress
-- Target: Make the core progression loop fully functional
-
-### Testing Checklist for v0.03
-- [ ] AP upgrade purchases work correctly
-- [ ] AP costs scale properly
-- [ ] Upgrade effects apply immediately
-- [ ] Offline progress calculates accurately
-- [ ] Welcome back popup shows correct gains
-- [ ] Save/load preserves all AP upgrades
-- [ ] Debug menu collapse works on page load
 
 ### Quick Debug Commands
 ```javascript
@@ -122,4 +109,4 @@ SaveLoad.save();
 - **v0.01** - Initial release with core gameplay
 - **v0.02** - Prestige system, recursive investors, save/load
 - **v0.03** - AP upgrades functional, offline progress, QoL improvements
-- **v0.04** - **[CURRENT]** 
+- **v0.10** - **[CURRENT]** 

@@ -3,7 +3,7 @@
 
 const CONFIG = {
   // Version
-  VERSION: '0.03',
+  VERSION: '0.10',
   
   // Core conversion ratios
   CLICKS_PER_STONE: 10,

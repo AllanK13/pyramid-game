@@ -11,16 +11,10 @@ No unreleased changes at this time.
 
 ---
 
-## [0.04] - Unreleased
-
-### Added
-
+## [0.10] - Initial release
 
 ### Changed
-
-
-### Fixed
-
+- Turned off debug mode
 
 ## [0.03] - 2025-12-02 (Released)
 
