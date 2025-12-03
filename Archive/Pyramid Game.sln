@@ -1,0 +1,32 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Archive", "Archive", "{51D3FFFF-5534-FA11-DF10-1E59F2D397C6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Android", "Android", "{9DA9BFDE-B5BB-A4FB-A08A-6B0E235A6D3F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp", "Archive\Android\Pyramid Game\Assembly-CSharp.csproj", "{44CD8BBE-3901-5528-6730-41B8B8F4674A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{44CD8BBE-3901-5528-6730-41B8B8F4674A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44CD8BBE-3901-5528-6730-41B8B8F4674A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44CD8BBE-3901-5528-6730-41B8B8F4674A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44CD8BBE-3901-5528-6730-41B8B8F4674A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{9DA9BFDE-B5BB-A4FB-A08A-6B0E235A6D3F} = {51D3FFFF-5534-FA11-DF10-1E59F2D397C6}
+		{44CD8BBE-3901-5528-6730-41B8B8F4674A} = {9DA9BFDE-B5BB-A4FB-A08A-6B0E235A6D3F}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F9EA5961-D2B7-48EE-8127-12E177933E3C}
+	EndGlobalSection
+EndGlobal

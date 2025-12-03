@@ -1,0 +1,18 @@
+10 clicks to stone - 10 stones to pyramid - 10 pyramids to hire - 5 hires max
+hires click one stone every 1 seconds - same rules as you - continues making pyramid after hire max
+
+
+upgrades: turn in XXX pyramids for 1 alien point (alien contact - pyramid ship)
+alien point upgrades: start with stones done (leads to start with pyramids done), number of hires (scaling costs and decaying effect by tier), speed of hire (scaling costs and decaying effect by tier), offline hire speed
+offline: hire speed scaled down
+
+make all upgrade values in one config file
+
+run locally - save every 10 minutes and log time, check time on start and if more than 10 minutes since last save calculate growth
+
+X alien points to win game and became aliens
+(expansion - collect from planets and make more planets)
+
+
+stone medium top left button to large button in middle of stones to pyramids on right with number on top
+5 to 10 workers below - who've each added 5-10 workers xXXX - who've made a total of XXX pyramids

@@ -1,0 +1,1910 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Pyramid Scheme - v0.03</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    /* #region CSS VARIABLES */
+    :root {
+      --bg: #050712;
+      --sky-top: #67b8ff;
+      --sky-bottom: #cbe9ff;
+      --desert-sand: #e5c27a;
+      --card-bg: rgba(7, 11, 30, 0.9);
+      --accent: #f5c76a;
+      --accent-soft: #f0e2c0;
+      --text-main: #f5f7ff;
+      --text-muted: #a9b1d6;
+      --locked-bg: rgba(5, 7, 18, 0.85);
+      --locked-border: rgba(255, 255, 255, 0.12);
+      --row-border: rgba(255, 255, 255, 0.08);
+      --tab-bg: #121528;
+      --tab-active: #252b4a;
+      --btn-primary-bg: #f5c76a;
+      --btn-primary-fg: #201608;
+      --btn-primary-hover: #ffd97e;
+    }
+    /* #endregion */
+
+    /* #region GLOBAL RESET & BASE STYLES */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+      width: 100%;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #192138 0%, #050712 60%);
+      color: var(--text-main);
+      overflow: hidden;
+    }
+
+    #app {
+      height: 100vh;
+      width: 100vw;
+      display: flex;
+      flex-direction: column;
+    }
+    /* #endregion */
+
+    /* #region TOP NAVIGATION & TABS */
+    header#top-nav {
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      background: #090b16;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      flex-shrink: 0;
+    }
+
+    #game-title {
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    #top-tabs {
+      display: flex;
+      gap: 4px;
+    }
+
+    .top-tab {
+      border: none;
+      border-radius: 999px;
+      padding: 6px 14px;
+      background: var(--tab-bg);
+      color: var(--text-muted);
+      font-size: 13px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .top-tab.active {
+      background: var(--tab-active);
+      color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(245, 199, 106, 0.6);
+    }
+
+    .top-tab span.dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--text-muted);
+    }
+
+    .top-tab.active span.dot {
+      background: var(--accent);
+    }
+    /* #endregion */
+
+    /* #region MAIN CONTENT AREA & TAB SCREENS */
+    main#tab-root {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .tab-screen {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease-out;
+    }
+
+    .tab-screen.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    /* #endregion */
+
+    /* #region PRODUCTION TAB - GAME SECTIONS */
+    .game-section {
+      width: 100%;
+    }
+    /* #endregion */
+
+    /* #region SKY SECTION */
+    #sky-ap {
+      height: 20vh;
+      background: linear-gradient(to bottom, var(--sky-top), var(--sky-bottom));
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding-bottom: 12px;
+    }
+
+    /* Sun in the sky */
+    #sky-ap::before {
+      content: "";
+      position: absolute;
+      top: 15%;
+      right: 15%;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #fff6a8 0%, #ffd54f 40%, #ffb300 100%);
+      box-shadow:
+        0 0 40px 15px rgba(255, 213, 79, 0.5),
+        0 0 80px 30px rgba(255, 179, 0, 0.3),
+        0 0 120px 50px rgba(255, 179, 0, 0.15);
+    }
+
+    /* Sun rays */
+    #sky-ap::after {
+      content: "";
+      position: absolute;
+      top: 15%;
+      right: 15%;
+      width: 60px;
+      height: 60px;
+      background: transparent;
+      border-radius: 50%;
+      box-shadow:
+        /* Ray 1 - top */ 0 -35px 0 -28px #ffd54f,
+        /* Ray 2 - top right */ 25px -25px 0 -28px #ffd54f,
+        /* Ray 3 - right */ 35px 0 0 -28px #ffd54f,
+        /* Ray 4 - bottom right */ 25px 25px 0 -28px #ffd54f,
+        /* Ray 5 - bottom */ 0 35px 0 -28px #ffd54f,
+        /* Ray 6 - bottom left */ -25px 25px 0 -28px #ffd54f,
+        /* Ray 7 - left */ -35px 0 0 -28px #ffd54f,
+        /* Ray 8 - top left */ -25px -25px 0 -28px #ffd54f;
+    }
+    /* #endregion */
+
+    /* #region DESERT SECTION */
+    #desert {
+      height: 30vh;
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(to bottom, var(--sky-bottom) 0%, #f9e7c0 66%, var(--desert-sand) 100%);
+    }
+
+    #desert-inner {
+      display: flex;
+      height: 100%;
+      width: 100%;
+      position: relative;
+      z-index: 1;
+      padding: 8px 10px;
+      gap: 8px;
+    }
+
+    .desert-column {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      position: relative;
+      padding-bottom: 20px;
+    }
+
+    /* The sand strip at bottom third */
+    #desert::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 50%;
+      background: radial-gradient(circle at top, #f6dfab 0, var(--desert-sand) 40%, #c99a55 100%);
+      box-shadow: 0 -6px 24px rgba(0, 0, 0, 0.25);
+    }
+    /* #endregion */
+
+    /* #region DESERT - LEFT COLUMN (PLAYER & STONE BUTTON) */
+    .character-and-stone {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 12px;
+      z-index: 1;
+    }
+
+    .you-sprite {
+      width: 60px;
+      height: 80px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #425679, #1e253d);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.35);
+      position: relative;
+    }
+
+    .you-sprite::before {
+      content: "YOU";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent-soft);
+    }
+
+    .big-stone-button {
+      margin-top: 4px;
+      width: 130px;
+      height: 80px;
+      border-radius: 18px;
+      border: none;
+      background: linear-gradient(145deg, #6f6f7a, #4a4c56);
+      box-shadow:
+        0 8px 14px rgba(0, 0, 0, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 0.35);
+      position: relative;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .big-stone-button::before {
+      content: "";
+      position: absolute;
+      inset: 8px 10px;
+      border-radius: 12px;
+      border: 2px dashed rgba(0, 0, 0, 0.35);
+      opacity: 0.6;
+    }
+
+    .big-stone-button:hover {
+      transform: translateY(-1px);
+      box-shadow:
+        0 12px 18px rgba(0, 0, 0, 0.45),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    }
+
+    .stone-progress-label {
+      font-size: 28px;
+      color: rgba(255, 255, 255, 0.9);
+      font-weight: 700;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+      z-index: 1;
+      pointer-events: none;
+    }
+    /* #endregion */
+
+    /* #region DESERT - MIDDLE COLUMN (SCULPTED STONES) */
+    .pile-container {
+      position: relative;
+      z-index: 1;
+      width: 90%;
+      max-width: 220px;
+      height: 90px;
+      border-radius: 16px;
+      background: linear-gradient(145deg, #c7b19a, #7b624f);
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.32);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: auto;
+    }
+
+    .pile-image.sculpted-stones-pile {
+      position: absolute;
+      left: 50%;
+      top: 60%;
+      transform: translate(-50%, -50%);
+      width: 130%;
+      height: 70%;
+      background:
+        radial-gradient(circle at 10% 0, rgba(255, 255, 255, 0.3) 0, transparent 40%),
+        repeating-linear-gradient(
+          145deg,
+          #7a614d 0,
+          #7a614d 8px,
+          #5a4637 8px,
+          #5a4637 16px
+        );
+    }
+
+    .pile-overlay {
+      font-size: 28px;
+      color: rgba(255, 255, 255, 0.95);
+      font-weight: 700;
+      text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .pile-subtext {
+      display: none;
+    }
+    /* #endregion */
+
+    /* #region DESERT - RIGHT COLUMN (PYRAMIDS) */
+    .pyramid-container {
+      position: relative;
+      z-index: 1;
+      width: 90%;
+      max-width: 280px;
+      height: 160px;
+      border-radius: 16px;
+      background: linear-gradient(145deg, #f6e1a8, #c8a25a);
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.32);
+      overflow: visible;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 12px 12px 16px;
+      margin-top: auto;
+    }
+
+    .pyramid-image {
+      position: relative;
+      width: 100%;
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .pyramid-image::before {
+      content: "";
+      width: 120px;
+      height: 100px;
+      background:
+        linear-gradient(to top, #d5b265 0, #f6e1a8 45%, #fff6d1 100%);
+      clip-path: polygon(50% 0, 0 100%, 100% 100%);
+      box-shadow:
+        0 10px 22px rgba(0, 0, 0, 0.35),
+        inset -12px -4px 18px rgba(0, 0, 0, 0.18);
+    }
+
+    .pyramid-overlay {
+      position: relative;
+      width: 100%;
+      text-align: center;
+      font-size: 18px;
+      color: rgba(8, 10, 26, 0.9);
+      font-weight: 700;
+      text-shadow: 0 1px 2px rgba(255, 255, 255, 0.3);
+      z-index: 1;
+      padding-top: 8px;
+      margin-top: auto;
+    }
+    /* #endregion */
+
+    /* #region WORKERS PANEL */
+    #workers-panel {
+      height: 50vh;
+      background: #070914;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      overflow-y: auto;
+      scrollbar-width: thin;
+      padding: 0;
+    }
+
+    #workers-panel::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    #workers-panel::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 999px;
+    }
+
+    #workers-scroll {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+    /* #endregion */
+
+    /* #region WORKER ROWS */
+    .worker-row {
+      height: 10vh;
+      min-height: 60px;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      position: relative;
+      border-bottom: 1px solid var(--row-border);
+      background: linear-gradient(to right, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0));
+      padding: 0 16px;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .worker-row:nth-child(even) {
+      background: linear-gradient(to right, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0));
+    }
+
+    .worker-row.locked {
+      opacity: 0.5;
+      pointer-events: auto;
+    }
+
+    .worker-row.locked .worker-locked-overlay {
+      display: flex;
+    }
+
+    .worker-row.locked .worker-hire-btn {
+      display: none;
+    }
+
+    .worker-row:not(.locked) .worker-locked-overlay {
+      display: none;
+    }
+
+    .worker-row:not(.locked) .worker-hire-btn {
+      display: flex;
+    }
+
+    .worker-locked-overlay {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      background: var(--locked-bg);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--locked-border);
+      border-radius: 999px;
+      padding: 8px 16px;
+      z-index: 3;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      opacity: 1;
+    }
+
+    .locked-text {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      white-space: nowrap;
+      opacity: 1;
+    }
+    /* #endregion */
+
+    /* #region WORKER ROW SECTIONS & LAYOUT */
+    .worker-section {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+
+    .worker-section-hire {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 3;
+    }
+
+    .worker-section-avatar {
+      grid-column: 1;
+      justify-content: center;
+    }
+
+    .worker-section-hires {
+      grid-column: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .worker-section-pyramids {
+      grid-column: 3;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .worker-section-connector {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 4px;
+    }
+
+    .worker-section-connector.left {
+      position: absolute;
+      left: calc(33.333% - 35px);
+      top: 50%;
+      transform: translateY(-50%);
+      width: 70px;
+      z-index: 2;
+    }
+
+    .worker-section-connector.right {
+      position: absolute;
+      left: calc(66.666% - 45px);
+      top: 50%;
+      transform: translateY(-50%);
+      width: 90px;
+      z-index: 2;
+    }
+
+    .connector-text {
+      font-size: 9px;
+      color: var(--text-muted);
+      text-align: center;
+      line-height: 1.2;
+      font-weight: 500;
+      text-transform: lowercase;
+      opacity: 0.8;
+    }
+    /* #endregion */
+
+    /* #region WORKER COMPONENTS - HIRE BUTTON */
+    .worker-hire-btn {
+      border: none;
+      border-radius: 8px;
+      padding: 10px 32px;
+      background: var(--btn-primary-bg);
+      color: var(--btn-primary-fg);
+      font-size: 14px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+      white-space: nowrap;
+      display: none;
+      opacity: 1;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .worker-hire-btn:hover {
+      background: var(--btn-primary-hover);
+      transform: scale(1.05);
+    }
+
+    .worker-hire-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    /* #endregion */
+
+    /* #region WORKER COMPONENTS - AVATAR */
+    .worker-avatar {
+      width: 80px;
+      height: 50px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #3b7fd1, #293558);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1;
+    }
+
+    .worker-avatar-label {
+      font-size: 10px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.9);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    /* #endregion */
+
+    /* #region WORKER COMPONENTS - PYRAMIDS DISPLAY */
+    .worker-pyramids-box {
+      width: 70px;
+      height: 50px;
+      border-radius: 12px;
+      background: linear-gradient(145deg, #f6e1a8, #c8a25a);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .worker-pyramids-box::before {
+      content: "";
+      position: absolute;
+      width: 30px;
+      height: 26px;
+      top: 6px;
+      background: linear-gradient(to top, #d5b265 0%, #f6e1a8 45%, #fff6d1 100%);
+      clip-path: polygon(50% 0, 0 100%, 100% 100%);
+    }
+
+    .worker-pyramids-count {
+      position: absolute;
+      bottom: 4px;
+      font-size: 11px;
+      color: rgba(8, 10, 26, 0.9);
+      font-weight: 700;
+    }
+
+    .worker-pyramids-label {
+      font-size: 10px;
+      color: var(--text-muted);
+      margin-top: 4px;
+      text-transform: uppercase;
+    }
+    /* #endregion */
+
+    /* #region WORKER COMPONENTS - HIRES DISPLAY */
+    .worker-hires-box {
+      width: 70px;
+      height: 50px;
+      border-radius: 12px;
+      background: linear-gradient(145deg, #364869, #151d33);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1;
+    }
+
+    .worker-hires-count {
+      font-size: 18px;
+      color: rgba(255, 255, 255, 0.95);
+      font-weight: 700;
+      z-index: 1;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+    }
+
+    .worker-hires-label {
+      font-size: 10px;
+      color: var(--text-muted);
+      margin-top: 4px;
+      text-transform: uppercase;
+    }
+    /* #endregion */
+
+    /* #region AP STORE TAB */
+    #ap-store-screen {
+      background: radial-gradient(circle at top, #263361 0, #050712 55%);
+      padding: 12px 16px 16px;
+      gap: 12px;
+      overflow-y: auto;
+    }
+
+    #ap-store-header {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+
+    #ap-balance {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    #ap-store-description {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .ap-section {
+      margin-bottom: 24px;
+    }
+
+    .ap-section-header {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid rgba(245, 199, 106, 0.3);
+    }
+
+    .ap-upgrade-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 10px;
+    }
+    /* #endregion */
+
+    /* #region AP UPGRADE CARDS */
+    .ap-upgrade-card {
+      background: var(--card-bg);
+      border-radius: 14px;
+      padding: 10px 12px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .ap-upgrade-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    .ap-upgrade-effect {
+      font-size: 13px;
+      color: var(--text-main);
+    }
+
+    .ap-upgrade-cost,
+    .ap-upgrade-level {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .ap-upgrade-buy {
+      margin-top: 6px;
+      align-self: flex-start;
+      border-radius: 999px;
+      border: none;
+      padding: 5px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      background: var(--btn-primary-bg);
+      color: var(--btn-primary-fg);
+    }
+
+    .ap-upgrade-buy:hover {
+      background: var(--btn-primary-hover);
+    }
+    /* #endregion */
+
+    /* #region STATS TAB */
+    #stats-screen {
+      background: radial-gradient(circle at top, #192138 0%, #050712 60%);
+      padding: 24px 16px;
+      overflow-y: auto;
+    }
+
+    #stats-content {
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .stats-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 32px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .stats-section {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.35);
+    }
+
+    .stats-header {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 16px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .stats-label {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .stats-value {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--accent);
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    .stats-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+      margin: 12px 0;
+      font-size: 16px;
+      color: var(--text-main);
+    }
+
+    .stats-row .stats-value {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .stats-investor {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 16px;
+      margin: 12px 0;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .stats-investor-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .stats-investor .stats-row {
+      font-size: 14px;
+    }
+
+    .stats-investor .stats-row .stats-value {
+      font-size: 16px;
+    }
+
+    #stats-investors-list {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .stats-save-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 2px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .stats-save-btn {
+      border: none;
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      transition: all 0.2s ease;
+    }
+
+    .stats-save-btn.export {
+      background: linear-gradient(135deg, #4a9eff, #3b7fd1);
+      color: white;
+    }
+
+    .stats-save-btn.export:hover {
+      background: linear-gradient(135deg, #5aafff, #4b8fe1);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(74, 158, 255, 0.4);
+    }
+
+    .stats-save-btn.import {
+      background: linear-gradient(135deg, #4ecdc4, #3ba39a);
+      color: white;
+    }
+
+    .stats-save-btn.import:hover {
+      background: linear-gradient(135deg, #5edddd, #4bb3aa);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(78, 205, 196, 0.4);
+    }
+
+    .stats-save-btn.delete {
+      background: linear-gradient(135deg, #e74c3c, #c0392b);
+      color: white;
+    }
+
+    .stats-save-btn.delete:hover {
+      background: linear-gradient(135deg, #f75c4c, #d0493b);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
+    }
+    /* #endregion */
+
+    /* #region DEBUG MENU */
+    #debug-menu {
+      position: fixed;
+      top: 60px;
+      right: 10px;
+      background: rgba(0, 0, 0, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      padding: 10px;
+      z-index: 9999;
+      display: none;
+      min-width: 180px;
+    }
+
+    #debug-menu.visible {
+      display: block;
+    }
+
+    #debug-menu h4 {
+      font-size: 12px;
+      color: #ff6b6b;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      cursor: pointer;
+      user-select: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    #debug-menu h4:hover {
+      color: #ff8888;
+    }
+
+    #debug-toggle-arrow {
+      font-size: 10px;
+      transition: transform 0.2s ease;
+    }
+
+    #debug-menu.collapsed #debug-toggle-arrow {
+      transform: rotate(-90deg);
+    }
+
+    #debug-menu-content {
+      display: block;
+      overflow: hidden;
+      transition: max-height 0.3s ease, opacity 0.3s ease;
+      max-height: 500px;
+      opacity: 1;
+    }
+
+    #debug-menu.collapsed #debug-menu-content {
+      max-height: 0;
+      opacity: 0;
+    }
+
+    .debug-btn {
+      display: block;
+      width: 100%;
+      border: none;
+      border-radius: 6px;
+      padding: 6px 12px;
+      margin-bottom: 6px;
+      background: #333;
+      color: #fff;
+      font-size: 11px;
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .debug-btn:hover {
+      background: #444;
+    }
+
+    .debug-btn:last-child {
+      margin-bottom: 0;
+    }
+    /* #endregion */
+
+    /* #region DEBUG DISPLAY */
+    #debug-display {
+      position: fixed;
+      bottom: 30px;
+      right: 10px;
+      background: rgba(0, 0, 0, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      padding: 10px;
+      z-index: 9999;
+      display: none;
+      font-family: 'Courier New', monospace;
+      font-size: 11px;
+      line-height: 1.6;
+      color: #fff;
+      max-width: 400px;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    #debug-display.visible {
+      display: block;
+    }
+
+    #debug-display h4 {
+      font-size: 12px;
+      color: #4fc3f7;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      padding-bottom: 4px;
+    }
+
+    .debug-section {
+      margin-bottom: 12px;
+    }
+
+    .debug-label {
+      color: #9e9e9e;
+      font-size: 10px;
+      text-transform: uppercase;
+      margin-top: 8px;
+      margin-bottom: 2px;
+    }
+
+    .debug-value {
+      color: #4fc3f7;
+      font-weight: bold;
+    }
+
+    .debug-investor {
+      margin: 6px 0;
+      padding: 6px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 4px;
+    }
+
+    .debug-investor-title {
+      color: #f5c76a;
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+
+    .debug-row {
+      display: flex;
+      justify-content: space-between;
+      margin: 2px 0;
+    }
+    /* #endregion */
+
+    /* #region ALIEN ARRIVAL BUTTON */
+    #alien-arrival-backdrop {
+      display: none;
+    }
+
+    #alien-arrival-area {
+      position: absolute;
+      top: 60%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      z-index: 50;
+      display: none;
+      pointer-events: none;
+    }
+
+    #alien-arrival-area.visible {
+      display: block;
+      pointer-events: auto;
+    }
+
+    #btn-prestige {
+      position: relative;
+      width: 200px;
+      height: 180px;
+      background: linear-gradient(to bottom, #667eea 0%, #764ba2 100%);
+      clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+      border: none;
+      cursor: pointer;
+      box-shadow: 
+        0 0 40px rgba(102, 126, 234, 0.8),
+        0 8px 24px rgba(0, 0, 0, 0.5),
+        inset 0 -40px 60px rgba(118, 75, 162, 0.6);
+      transition: all 0.3s ease;
+      animation: pulse-glow 2s infinite, float-bounce 3s ease-in-out infinite;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 85px 20px 60px;
+    }
+
+    .prestige-title {
+      font-size: 14px;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+      white-space: nowrap;
+      margin-top: 8px;
+    }
+
+    .prestige-sell {
+      font-size: 16px;
+      margin-bottom: 6px;
+      color: var(--accent);
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-weight: 700;
+      margin-top: 0px;
+    }
+
+    .prestige-pyramids {
+      font-size: 20px;
+      margin-bottom: 2px;
+      color: rgba(255, 255, 255, 0.95);
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+      font-weight: 700;
+    }
+
+    .prestige-label {
+      font-size: 10px;
+      margin-bottom: 4px;
+      color: rgba(255, 255, 255, 0.7);
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .prestige-ap-gain {
+      font-size: 14px;
+      color: var(--accent);
+      font-weight: 800;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% {
+        box-shadow: 
+          0 0 40px rgba(102, 126, 234, 0.8),
+          0 8px 24px rgba(0, 0, 0, 0.5),
+          inset 0 -40px 60px rgba(118, 75, 162, 0.6);
+      }
+      50% {
+        box-shadow: 
+          0 0 60px rgba(102, 126, 234, 1),
+          0 8px 24px rgba(0, 0, 0, 0.5),
+          inset 0 -40px 60px rgba(118, 75, 162, 0.8);
+      }
+    }
+
+    @keyframes float-bounce {
+      0%, 100% {
+        transform: translateY(0px);
+      }
+      50% {
+        transform: translateY(-10px);
+      }
+    }
+    /* #endregion */
+
+    /* #region RESPONSIVE DESIGN - MOBILE */
+    @media (max-width: 768px) {
+      header#top-nav {
+        padding: 0 10px;
+      }
+      #game-title {
+        font-size: 15px;
+      }
+      
+      .stats-title {
+        font-size: 20px;
+      }
+      
+      .stats-value {
+        font-size: 24px;
+      }
+      
+      .stats-row {
+        font-size: 14px;
+      }
+      
+      #stats-investors-list {
+        grid-template-columns: 1fr;
+      }
+      
+      .stats-save-buttons {
+        grid-template-columns: 1fr;
+      }
+    }
+    /* #endregion */
+  </style>
+</head>
+
+<body>
+  <!-- #region MAIN APP CONTAINER -->
+  <div id="app">
+    <!-- #region TOP NAVIGATION BAR -->
+    <header id="top-nav">
+      <div id="game-title">Pyramid Scheme</div>
+      <div id="top-tabs">
+        <button class="top-tab active" data-tab-target="production">
+          <span class="dot"></span> Production
+        </button>
+        <button class="top-tab" data-tab-target="stats">
+          <span class="dot"></span> Stats
+        </button>
+        <button class="top-tab" data-tab-target="ap-store">
+          <span class="dot"></span> AP Store
+        </button>
+      </div>
+    </header>
+    <!-- #endregion -->
+
+    <!-- #region TAB CONTENT ROOT -->
+    <main id="tab-root">
+      <!-- #region PRODUCTION TAB -->
+      <section id="production-screen" class="tab-screen active">
+        <!-- SKY SECTION -->
+        <section id="sky-ap" class="game-section sky-background">
+          <!-- Alien Arrival Area - positioned in sky -->
+          <div id="alien-arrival-area">
+            <button id="btn-prestige">
+              <div class="prestige-sell">SELL</div>
+              <div class="prestige-pyramids">
+                <span id="prestige-pyramid-count">0</span>
+              </div>
+              <div class="prestige-label">pyramids</div>
+              <div class="prestige-ap-gain">
+                for <span id="prestige-ap-amount">0</span> AP
+              </div>
+            </button>
+            <div class="prestige-title">🛸 Aliens have arrived! 🛸</div>
+          </div>
+        </section>
+        
+        <!-- DESERT SECTION -->
+        <section id="desert" class="game-section desert-background">
+          <div id="desert-inner">
+            <div class="desert-column" id="col-player-stone">
+              <div class="character-and-stone">
+                <div class="you-sprite"></div>
+                <button id="btn-main-sculpt" class="big-stone-button" title="Main sculpt button">
+                  <span class="stone-progress-label">
+                    <span id="current-stone-progress">0</span>/<span id="current-stone-max">10</span>
+                  </span>
+                </button>
+              </div>
+            </div>
+
+            <div class="desert-column" id="col-sculpted-stones">
+              <div class="pile-container">
+                <div class="pile-image sculpted-stones-pile"></div>
+                <div class="pile-overlay">
+                  <span id="sculpted-stones-count">0</span>/<span id="stones-per-pyramid">10</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="desert-column" id="col-pyramids">
+              <div class="pyramid-container">
+                <div class="pyramid-image"></div>
+                <div class="pyramid-overlay">
+                  Pyramids: <span id="pyramids-count">0</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- WORKERS PANEL -->
+        <section id="workers-panel" class="game-section">
+          <div id="workers-scroll">
+            <!-- Row 1: Investor 1 -->
+            <div class="worker-row locked" data-worker="1" data-unlock-requirement="10">
+              <div class="worker-section worker-section-hire">
+                <button class="worker-hire-btn" id="btn-hire-worker1">
+                  Hire
+                </button>
+              </div>
+              <div class="worker-section worker-section-avatar">
+                <div class="worker-avatar">
+                  <span class="worker-avatar-label">Investor 1</span>
+                </div>
+              </div>
+              <div class="worker-section-connector left">
+                <span class="connector-text">who recruited</span>
+              </div>
+              <div class="worker-section worker-section-hires">
+                <div class="worker-hires-box">
+                  <span class="worker-hires-count" id="worker1-hires">0</span>
+                </div>
+                <span class="worker-hires-label">Investors</span>
+              </div>
+              <div class="worker-section-connector right">
+                <span class="connector-text">and combined made</span>
+              </div>
+              <div class="worker-section worker-section-pyramids">
+                <div class="worker-pyramids-box">
+                  <span class="worker-pyramids-count" id="worker1-pyramids">0</span>
+                </div>
+                <span class="worker-pyramids-label">Pyramids</span>
+              </div>
+              <div class="worker-locked-overlay">
+                <span class="locked-text">🔒 Locked (need 10 🔺)</span>
+              </div>
+            </div>
+
+            <!-- Row 2: Investor 2 -->
+            <div class="worker-row locked" data-worker="2" data-unlock-requirement="20">
+              <div class="worker-section worker-section-hire">
+                <button class="worker-hire-btn" id="btn-hire-worker2">
+                  Hire
+                </button>
+              </div>
+              <div class="worker-section worker-section-avatar">
+                <div class="worker-avatar">
+                  <span class="worker-avatar-label">Investor 2</span>
+                </div>
+              </div>
+              <div class="worker-section-connector left">
+                <span class="connector-text">who recruited</span>
+              </div>
+              <div class="worker-section worker-section-hires">
+                <div class="worker-hires-box">
+                  <span class="worker-hires-count" id="worker2-hires">0</span>
+                </div>
+                <span class="worker-hires-label">Investors</span>
+              </div>
+              <div class="worker-section-connector right">
+                <span class="connector-text">and combined made</span>
+              </div>
+              <div class="worker-section worker-section-pyramids">
+                <div class="worker-pyramids-box">
+                  <span class="worker-pyramids-count" id="worker2-pyramids">0</span>
+                </div>
+                <span class="worker-pyramids-label">Pyramids</span>
+              </div>
+              <div class="worker-locked-overlay">
+                <span class="locked-text">🔒 Locked (need 20 🔺)</span>
+              </div>
+            </div>
+
+            <!-- Row 3: Investor 3 -->
+            <div class="worker-row locked" data-worker="3" data-unlock-requirement="30">
+              <div class="worker-section worker-section-hire">
+                <button class="worker-hire-btn" id="btn-hire-worker3">
+                  Hire
+                </button>
+              </div>
+              <div class="worker-section worker-section-avatar">
+                <div class="worker-avatar">
+                  <span class="worker-avatar-label">Investor 3</span>
+                </div>
+              </div>
+              <div class="worker-section-connector left">
+                <span class="connector-text">who recruited</span>
+              </div>
+              <div class="worker-section worker-section-hires">
+                <div class="worker-hires-box">
+                  <span class="worker-hires-count" id="worker3-hires">0</span>
+                </div>
+                <span class="worker-hires-label">Investors</span>
+              </div>
+              <div class="worker-section-connector right">
+                <span class="connector-text">and combined made</span>
+              </div>
+              <div class="worker-section worker-section-pyramids">
+                <div class="worker-pyramids-box">
+                  <span class="worker-pyramids-count" id="worker3-pyramids">0</span>
+                </div>
+                <span class="worker-pyramids-label">Pyramids</span>
+              </div>
+              <div class="worker-locked-overlay">
+                <span class="locked-text">🔒 Locked (need 30 🔺)</span>
+              </div>
+            </div>
+
+            <!-- Row 4: Investor 4 -->
+            <div class="worker-row locked" data-worker="4" data-unlock-requirement="40">
+              <div class="worker-section worker-section-hire">
+                <button class="worker-hire-btn" id="btn-hire-worker4">
+                  Hire
+                </button>
+              </div>
+              <div class="worker-section worker-section-avatar">
+                <div class="worker-avatar">
+                  <span class="worker-avatar-label">Investor 4</span>
+                </div>
+              </div>
+              <div class="worker-section-connector left">
+                <span class="connector-text">who recruited</span>
+              </div>
+              <div class="worker-section worker-section-hires">
+                <div class="worker-hires-box">
+                  <span class="worker-hires-count" id="worker4-hires">0</span>
+                </div>
+                <span class="worker-hires-label">Investors</span>
+              </div>
+              <div class="worker-section-connector right">
+                <span class="connector-text">and combined made</span>
+              </div>
+              <div class="worker-section worker-section-pyramids">
+                <div class="worker-pyramids-box">
+                  <span class="worker-pyramids-count" id="worker4-pyramids">0</span>
+                </div>
+                <span class="worker-pyramids-label">Pyramids</span>
+              </div>
+              <div class="worker-locked-overlay">
+                <span class="locked-text">🔒 Locked (need 40 🔺)</span>
+              </div>
+            </div>
+
+            <!-- Row 5: Investor 5 -->
+            <div class="worker-row locked" data-worker="5" data-unlock-requirement="50">
+              <div class="worker-section worker-section-hire">
+                <button class="worker-hire-btn" id="btn-hire-worker5">
+                  Hire
+                </button>
+              </div>
+              <div class="worker-section worker-section-avatar">
+                <div class="worker-avatar">
+                  <span class="worker-avatar-label">Investor 5</span>
+                </div>
+              </div>
+              <div class="worker-section-connector left">
+                <span class="connector-text">who recruited</span>
+              </div>
+              <div class="worker-section worker-section-hires">
+                <div class="worker-hires-box">
+                  <span class="worker-hires-count" id="worker5-hires">0</span>
+                </div>
+                <span class="worker-hires-label">Investors</span>
+              </div>
+              <div class="worker-section-connector right">
+                <span class="connector-text">and combined made</span>
+              </div>
+              <div class="worker-section worker-section-pyramids">
+                <div class="worker-pyramids-box">
+                  <span class="worker-pyramids-count" id="worker5-pyramids">0</span>
+                </div>
+                <span class="worker-pyramids-label">Pyramids</span>
+              </div>
+              <div class="worker-locked-overlay">
+                <span class="locked-text">🔒 Locked (need 50 🔺)</span>
+              </div>
+            </div>
+          </div>
+        </section>
+      </section>
+      <!-- #endregion -->
+
+      <!-- #region AP STORE TAB -->
+      <section id="ap-store-screen" class="tab-screen">
+        <div id="ap-store-header">
+          <div id="ap-balance">
+            AP: <span id="ap-balance-amount">0</span>
+          </div>
+          <div id="ap-store-description">
+            Spend Alien Points (AP) on permanent upgrades that persist through resets.
+          </div>
+        </div>
+
+        <!-- Starting Bonuses Section -->
+        <div class="ap-section">
+          <div class="ap-section-header">🎁 Starting Bonuses</div>
+          <div class="ap-upgrade-grid">
+            <div class="ap-upgrade-card" data-upgrade-id="startingStones">
+              <div class="ap-upgrade-title">Starting Sculpted Stones</div>
+              <div class="ap-upgrade-effect">
+                Start each run with <span class="effect-value">+1</span> Sculpted Stones.
+              </div>
+              <div class="ap-upgrade-cost">
+                Cost: <span class="ap-cost">?</span> AP
+              </div>
+              <div class="ap-upgrade-level">
+                Level: <span class="ap-level">0</span>
+              </div>
+              <button class="ap-upgrade-buy">Purchase</button>
+            </div>
+
+            <div class="ap-upgrade-card" data-upgrade-id="startingPyramids">
+              <div class="ap-upgrade-title">Legacy Pyramids</div>
+              <div class="ap-upgrade-effect">
+                Start each run with <span class="effect-value">+1</span> Pyramids already built.
+              </div>
+              <div class="ap-upgrade-cost">
+                Cost: <span class="ap-cost">?</span> AP
+              </div>
+              <div class="ap-upgrade-level">
+                Level: <span class="ap-level">0</span>
+              </div>
+              <button class="ap-upgrade-buy">Purchase</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Investor Management Section -->
+        <div class="ap-section">
+          <div class="ap-section-header">👥 Investor Management</div>
+          <div class="ap-upgrade-grid">
+            <div class="ap-upgrade-card" data-upgrade-id="hireCapacity">
+              <div class="ap-upgrade-title">Increased Hire Capacity</div>
+              <div class="ap-upgrade-effect">
+                Hire <span class="effect-value">+1</span> more investors.
+              </div>
+              <div class="ap-upgrade-cost">
+                Cost: <span class="ap-cost">?</span> AP
+              </div>
+              <div class="ap-upgrade-level">
+                Level: <span class="ap-level">0</span>
+              </div>
+              <button class="ap-upgrade-buy">Purchase</button>
+            </div>
+
+            <div class="ap-upgrade-card" data-upgrade-id="workerSpeedOnline">
+              <div class="ap-upgrade-title">Investor Speed Training</div>
+              <div class="ap-upgrade-effect">
+                Investors sculpt stones <span class="effect-value">+1%</span> faster (while online).
+              </div>
+              <div class="ap-upgrade-cost">
+                Cost: <span class="ap-cost">?</span> AP
+              </div>
+              <div class="ap-upgrade-level">
+                Level: <span class="ap-level">0</span>
+              </div>
+              <button class="ap-upgrade-buy">Purchase</button>
+            </div>
+
+            <div class="ap-upgrade-card" data-upgrade-id="investorDecayRate">
+              <div class="ap-upgrade-title">Investor Decay Reduction</div>
+              <div class="ap-upgrade-effect">
+                Reduce sub-investor tier decay by <span class="effect-value">2%</span> (currently <span id="current-decay-rate">20%</span>).
+              </div>
+              <div class="ap-upgrade-cost">
+                Cost: <span class="ap-cost">?</span> AP
+              </div>
+              <div class="ap-upgrade-level">
+                Level: <span class="ap-level">0</span>/8
+              </div>
+              <button class="ap-upgrade-buy">Purchase</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Advanced Upgrades Section -->
+        <div class="ap-section">
+          <div class="ap-section-header">⚡ Advanced Upgrades</div>
+          <div class="ap-upgrade-grid">
+            <div class="ap-upgrade-card" data-upgrade-id="workerSpeedOffline">
+              <div class="ap-upgrade-title">Offline Efficiency</div>
+              <div class="ap-upgrade-effect">
+                Investors produce <span class="effect-value">+5%</span> while offline.
+              </div>
+              <div class="ap-upgrade-cost">
+                Cost: <span class="ap-cost">?</span> AP
+              </div>
+              <div class="ap-upgrade-level">
+                Level: <span class="ap-level">0</span>
+              </div>
+              <button class="ap-upgrade-buy">Purchase</button>
+            </div>
+
+            <div class="ap-upgrade-card" data-upgrade-id="apGainBonus">
+              <div class="ap-upgrade-title">Alien Bargaining</div>
+              <div class="ap-upgrade-effect">
+                Gain <span class="effect-value">+10%</span> more AP when selling pyramids.
+              </div>
+              <div class="ap-upgrade-cost">
+                Cost: <span class="ap-cost">?</span> AP
+              </div>
+              <div class="ap-upgrade-level">
+                Level: <span class="ap-level">0</span>
+              </div>
+              <button class="ap-upgrade-buy">Purchase</button>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- #endregion -->
+
+      <!-- #region STATS TAB -->
+      <section id="stats-screen" class="tab-screen">
+        <div id="stats-content">
+          <h2 class="stats-title">📊 Game Statistics</h2>
+          
+          <div class="stats-section">
+            <div class="stats-label">Total Pyramids</div>
+            <div class="stats-value" id="stats-total-pyramids">0</div>
+            <div class="stats-label" style="margin-top: 16px; font-size: 12px;">Pyramids Per Second</div>
+            <div class="stats-value" style="font-size: 24px;" id="stats-pyramids-per-second">0.00</div>
+          </div>
+
+          <div class="stats-section">
+            <div class="stats-header">Player</div>
+            <div class="stats-row">
+              <span>Stone Progress:</span>
+              <span class="stats-value" id="stats-player-stone-progress">0/10</span>
+            </div>
+            <div class="stats-row">
+              <span>Sculpted Stones:</span>
+              <span class="stats-value" id="stats-player-sculpted">0/10</span>
+            </div>
+            <div class="stats-row">
+              <span>Pyramids:</span>
+              <span class="stats-value" id="stats-player-pyramids">0</span>
+            </div>
+          </div>
+
+          <div class="stats-section">
+            <div class="stats-header">Investors</div>
+            <div id="stats-investors-list">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+          <!-- Save Management Buttons -->
+          <div class="stats-save-buttons">
+            <button class="stats-save-btn export" id="stats-export-save">
+              📤 Export Save
+            </button>
+            <button class="stats-save-btn import" id="stats-import-save">
+              📥 Import Save
+            </button>
+            <button class="stats-save-btn delete" id="stats-delete-save">
+              🗑️ Delete Save
+            </button>
+          </div>
+        </div>
+      </section>
+      <!-- #endregion -->
+    </main>
+    <!-- #endregion -->
+  </div>
+  <!-- #endregion -->
+
+  <!-- #region DEBUG DISPLAY -->
+  <div id="debug-display">
+    <h4>🔍 Debug Info</h4>
+    
+    <div class="debug-section">
+      <div class="debug-label">Total Pyramids</div>
+      <div class="debug-value" id="debug-total-pyramids">0</div>
+    </div>
+
+    <div class="debug-section">
+      <div class="debug-label">Player</div>
+      <div class="debug-row">
+        <span>Stone Progress:</span>
+        <span class="debug-value" id="debug-player-stone-progress">0/10</span>
+      </div>
+      <div class="debug-row">
+        <span>Sculpted Stones:</span>
+        <span class="debug-value" id="debug-player-sculpted">0/10</span>
+      </div>
+      <div class="debug-row">
+        <span>Pyramids:</span>
+        <span class="debug-value" id="debug-player-pyramids">0</span>
+      </div>
+    </div>
+
+    <div class="debug-section">
+      <div class="debug-label">Investors</div>
+      <div id="debug-investors-list">
+        <!-- Dynamically populated -->
+      </div>
+    </div>
+  </div>
+  <!-- #endregion -->
+
+  <!-- #region DEBUG MENU -->
+  <div id="debug-menu">
+    <h4 id="debug-toggle">
+      🔧 Debug
+      <span id="debug-toggle-arrow">▼</span>
+    </h4>
+    <div id="debug-menu-content">
+      <button class="debug-btn" id="debug-add-stone-clicks">+9 Stone Clicks</button>
+      <button class="debug-btn" id="debug-add-stones">+9 Sculpted Stones</button>
+      <button class="debug-btn" id="debug-add-pyramids">+10 Pyramids</button>
+      <button class="debug-btn" id="debug-add-many-pyramids">+1,000,000 Pyramids</button>
+      <button class="debug-btn" id="debug-add-ap">+1000 AP</button>
+      <hr style="margin: 8px 0; border-color: rgba(255,255,255,0.2);">
+      <button class="debug-btn" id="debug-export-save">📤 Export Save</button>
+      <button class="debug-btn" id="debug-import-save">📥 Import Save</button>
+      <button class="debug-btn" id="debug-delete-save" style="background: #800; color: #fff;">🗑️ Delete Save</button>
+    </div>
+  </div>
+  <!-- Hidden file input for import -->
+  <input type="file" id="import-file-input" accept=".txt" style="display: none;">
+  <!-- #endregion -->
+
+  <!-- #region GAME MODULES - JAVASCRIPT -->
+  
+  <script src="js/config.js"></script>
+  <script src="js/gameState.js"></script>
+  <script src="js/workers.js"></script>
+  <script src="js/prestige.js"></script>
+  <script src="js/gameEngine.js"></script>
+  <script src="js/saveLoad.js"></script>
+  <script src="js/ui.js"></script>
+  <!-- #endregion -->
+  
+  <!-- #region GAME INITIALIZATION -->
+  <script>
+    // Initialize the game when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('Pyramid Game - Starting...');
+      
+      // Ensure GameState exists and has a state object
+      if (typeof GameState !== 'undefined') {
+        if (!GameState.state) {
+          GameState.state = {};
+        }
+      }
+      
+      // Try to load saved game
+      const loaded = SaveLoad.load();
+      
+      if (!loaded) {
+        // New game - initialize state
+        if (typeof GameState !== 'undefined' && GameState.init) {
+          GameState.init();
+          console.log('New game initialized');
+        }
+      } else {
+        console.log('Saved game loaded');
+      }
+      
+      console.log('Current pyramids:', GameState.state.pyramids);
+      console.log('Worker states:', GameState.state.workers);
+      
+      // Initialize UI
+      UI.init();
+      
+      // Start the game engine
+      GameEngine.start();
+      
+      // Start autosave
+      SaveLoad.startAutosave();
+      
+      // Save on page unload
+      window.addEventListener('beforeunload', function() {
+        SaveLoad.save();
+      });
+      
+      // Debug menu - always show if CONFIG.debug_mode is true
+      const debugMenu = document.getElementById('debug-menu');
+      const debugDisplay = document.getElementById('debug-display');
+      if (CONFIG && CONFIG.debug_mode === true) {
+        debugMenu.classList.add('visible');
+        debugDisplay.classList.add('visible');
+        console.log('Debug menu and display enabled');
+      }
+      
+      // Debug menu collapse toggle
+      const debugToggle = document.getElementById('debug-toggle');
+      if (debugToggle) {
+        debugToggle.addEventListener('click', function() {
+          debugMenu.classList.toggle('collapsed');
+        });
+      }
+      
+      document.getElementById('debug-add-stone-clicks').addEventListener('click', function() {
+        GameState.state.stoneProgress = (GameState.state.stoneProgress || 0) + 9;
+        
+        // Trigger overflow conversion
+        const required = CONFIG.CLICKS_PER_STONE || 10;
+        while (GameState.state.stoneProgress >= required) {
+          GameState.state.stoneProgress -= required;
+          GameState.state.sculptedStones = (GameState.state.sculptedStones || 0) + 1;
+        }
+        
+        GameEngine.convertStonesToPyramids();
+        UI.update();
+        console.log('Added 9 stone clicks, progress:', GameState.state.stoneProgress);
+      });
+      
+      document.getElementById('debug-add-stones').addEventListener('click', function() {
+        GameState.state.sculptedStones = (GameState.state.sculptedStones || 0) + 9;
+        GameEngine.convertStonesToPyramids();
+        UI.update();
+        console.log('Added 9 sculpted stones, total:', GameState.state.sculptedStones);
+      });
+      
+      document.getElementById('debug-add-pyramids').addEventListener('click', function() {
+        GameState.state.pyramids = (GameState.state.pyramids || 0) + 10;
+        UI.update();
+        console.log('Added 10 pyramids, total:', GameState.state.pyramids);
+      });
+      
+      document.getElementById('debug-add-many-pyramids').addEventListener('click', function() {
+        GameState.state.pyramids = (GameState.state.pyramids || 0) + 1000000;
+        UI.update();
+        console.log('Added 1,000,000 pyramids, total:', GameState.state.pyramids);
+      });
+      
+      document.getElementById('debug-add-ap').addEventListener('click', function() {
+        GameState.state.alienPoints = (GameState.state.alienPoints || 0) + 1000;
+        UI.update();
+        console.log('Added 1000 AP, total:', GameState.state.alienPoints);
+      });
+      
+      // Export save button
+      document.getElementById('debug-export-save').addEventListener('click', function() {
+        SaveLoad.exportSaveFile();
+      });
+      
+      // Import save button
+      document.getElementById('debug-import-save').addEventListener('click', function() {
+        document.getElementById('import-file-input').click();
+      });
+      
+      // Handle file import
+      document.getElementById('import-file-input').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          const content = event.target.result;
+          if (SaveLoad.importSaveFile(content)) {
+            UI.update();
+            alert('Save file imported successfully!');
+          }
+        };
+        reader.readAsText(file);
+        
+        // Reset input
+        e.target.value = '';
+      });
+      
+      // Delete save button
+      document.getElementById('debug-delete-save').addEventListener('click', function() {
+        SaveLoad.deleteSave();
+      });
+      
+      // Stats tab save buttons
+      document.getElementById('stats-export-save').addEventListener('click', function() {
+        SaveLoad.exportSaveFile();
+      });
+      
+      document.getElementById('stats-import-save').addEventListener('click', function() {
+        document.getElementById('import-file-input').click();
+      });
+      
+      document.getElementById('stats-delete-save').addEventListener('click', function() {
+        SaveLoad.deleteSave();
+      });
+      
+      console.log('Pyramid Game - Ready!');
+    });
+  </script>
+  <!-- #endregion -->
+</body></html>
