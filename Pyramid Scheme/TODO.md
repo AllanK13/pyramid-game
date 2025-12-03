@@ -1,44 +1,8 @@
 # Pyramid Scheme - Development TODO
 
-## 📋 Version 0.03 Roadmap
+## 📋 Version 0.04 Roadmap
 
 ### High Priority (For v0.03)
-- [x] **Make AP Upgrades Purchasable**
-  - ✅ Add click handlers to purchase buttons
-  - ✅ Deduct AP cost and increment level
-  - ✅ Apply effects immediately
-  - ✅ Show purchase confirmation/feedback
-  - ✅ Update UI to reflect new bonuses
-  - ✅ Fix upgrade effect calculations (hireCapacity, workerSpeedOnline)
-
-- [x] **Offline Progress System**
-  - ✅ Track time away from game (lastSaveTime)
-  - ✅ Calculate production during offline period
-  - ✅ Apply offline speed multiplier (50% base + upgrades)
-  - ✅ Show "Welcome Back" summary popup with gains
-  - ✅ Cap offline time to 24 hours max
-  - ✅ Simulates worker production accurately
-  - ✅ Activated `workerSpeedOffline` upgrade
-
-- [x] **Implement Remaining Upgrade Functionality**
-  - ✅ `startingStones` - Give bonus sculpted stones on prestige reset
-  - ✅ `startingPyramids` - Give bonus pyramids on prestige reset
-  - ✅ `apGainBonus` - Already implemented in Prestige.calculateAPGain()
-  - ✅ `workerSpeedOffline` - Applied in offline calculations
-
-- [x] **Economy Balancing**
-  - ✅ Adjusted prestige requirement to 100,000 pyramids
-  - ✅ Set AP upgrade costs based on power analysis
-  - ✅ Balanced for 1-week completion timeline
-  - ✅ Victory goal set to 1 billion pyramids
-
-- [x] **Progressive UI Reveals**
-  - ✅ Hide AP Store tab until 100k pyramids
-  - ✅ Show AP displays after first prestige
-  - ✅ Dynamic investor rows (6-10) based on hireCapacity
-
-- ✅ Fix AP Store visibility upon prestige
-- ✅ check offline popup - force debug mode
 
 - [ ] **Visual/Audio Feedback**
   - [ ] Add particle effects when pyramids complete
@@ -61,10 +25,6 @@
   - Volume controls
 
 ## 🚀 Medium Priority
-
-- ✅ Balance production rates and pyramid requirements
-  - Current: 10 clicks → 1 stone, 10 stones → 1 pyramid, 10 pyramids → 1 hire
-  - May need tuning for proper game pacing
 
 - [ ] Achievements System
   - First pyramid built
@@ -161,4 +121,5 @@ SaveLoad.save();
 ## Version History
 - **v0.01** - Initial release with core gameplay
 - **v0.02** - Prestige system, recursive investors, save/load
-- **v0.03** - **[CURRENT]** AP upgrades functional, offline progress, QoL improvements
+- **v0.03** - AP upgrades functional, offline progress, QoL improvements
+- **v0.04** - **[CURRENT]** 

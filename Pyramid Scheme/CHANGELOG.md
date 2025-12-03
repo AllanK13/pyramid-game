@@ -11,6 +11,17 @@ No unreleased changes at this time.
 
 ---
 
+## [0.04] - Unreleased
+
+### Added
+
+
+### Changed
+
+
+### Fixed
+
+
 ## [0.03] - 2025-12-02 (Released)
 
 ### Added
@@ -74,7 +85,7 @@ No unreleased changes at this time.
 
 ---
 
-## [0.02] - 2025-01-XX
+## [0.02] - 2025-12-01
 
 ### Added
 - **Prestige System (Functional)**
