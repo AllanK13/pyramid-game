@@ -1411,6 +1411,87 @@
       .stats-save-buttons {
         grid-template-columns: 1fr;
       }
+
+      /* Mobile layout adjustments to ensure 5 investor rows are visible/usable */
+      /* reduce the vertical footprint of the top sections (sky + desert) */
+      #sky-ap {
+        height: 14vh;
+      }
+
+      #desert {
+        height: 26vh;
+      }
+
+      /* Make workers panel fill the remaining viewport height */
+      /* header is 52px; subtract sky and desert heights so workers-panel uses leftover space */
+      #workers-panel {
+        height: calc(100vh - 52px - 14vh - 26vh);
+        min-height: 160px;
+      }
+
+      /* Shrink worker rows and components so 5 fit comfortably */
+      .worker-row {
+        height: 9vh;
+        min-height: 48px;
+        padding: 0 8px;
+        grid-template-columns: 0.9fr 1fr 1fr;
+        gap: 6px;
+      }
+
+      .worker-avatar {
+        width: 60px;
+        height: 36px;
+        border-radius: 10px;
+      }
+
+      .worker-avatar-label {
+        font-size: 9px;
+      }
+
+      .worker-hires-box,
+      .worker-pyramids-box {
+        width: 56px;
+        height: 36px;
+        border-radius: 10px;
+      }
+
+      .worker-hires-count {
+        font-size: 16px;
+      }
+
+      .worker-pyramids-count {
+        font-size: 11px;
+      }
+
+      .worker-hire-btn {
+        padding: 8px 18px;
+        font-size: 12px;
+      }
+
+      /* Hide the connector labels on small screens to save space */
+      .worker-section-connector.left,
+      .worker-section-connector.right,
+      .connector-text {
+        display: none;
+      }
+
+      /* Slightly reduce main sculpt button & sprite size */
+      .big-stone-button {
+        width: 110px;
+        height: 64px;
+      }
+
+      .you-sprite {
+        width: 48px;
+        height: 64px;
+      }
+
+      /* Adjust pyramid/pile visuals to avoid overflow */
+      .pile-container,
+      .pyramid-container {
+        max-width: 180px;
+      }
+
     }
     /* #endregion */
   </style>
