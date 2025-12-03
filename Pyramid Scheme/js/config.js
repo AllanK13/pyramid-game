@@ -3,7 +3,7 @@
 
 const CONFIG = {
   // Version
-  VERSION: '0.10',
+  VERSION: '0.11',
   
   // Core conversion ratios
   CLICKS_PER_STONE: 10,
@@ -36,7 +36,11 @@ const CONFIG = {
   
   // Debug settings
   debug_mode: false,  // Set to false to hide debug menu
-  
+
+  // Mobile UI tweaks
+  // Minimum number of investors to show on mobile/small screens to avoid hiding investors due to tight layout
+  MOBILE_MIN_VISIBLE_INVESTORS: 5,
+
   // Worker tier unlock requirements (in pyramids)
   WORKER_UNLOCK_REQUIREMENTS: {
     '1': 10,
@@ -178,7 +182,20 @@ CONFIG.getMaxHiresForTier = function(tier, apUpgrades = {}) {
   // Tier 1 (the player's direct hires) gets decay applied
   if (tier === 1) {
     const decayRate = this.getEffectiveDecayRate(apUpgrades);
-    return Math.floor((baseCapacity + hireCapacityBonus) * (1 - decayRate));
+    let effective = Math.floor((baseCapacity + hireCapacityBonus) * (1 - decayRate));
+
+    // Mobile/small-screen detection (safe checks for non-browser environments)
+    const isMobileUA = (typeof navigator !== 'undefined') && /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    const isSmallWidth = (typeof window !== 'undefined') && window.innerWidth && window.innerWidth < 600;
+    const isMobile = isMobileUA || isSmallWidth;
+
+    if (isMobile) {
+      // Ensure UI on mobile shows at least the configured minimum visible investors
+      const minVisible = this.MOBILE_MIN_VISIBLE_INVESTORS || 5;
+      effective = Math.max(effective, minVisible);
+    }
+
+    return effective;
   }
   
   // Higher tiers get full capacity

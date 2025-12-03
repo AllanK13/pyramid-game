@@ -12,7 +12,7 @@ const SaveLoad = {
 
     try {
       const saveData = {
-        version: '0.03',
+        version: '0.11',
         timestamp: Date.now(),
         
         // Always save AP and upgrades (NEVER reset)
