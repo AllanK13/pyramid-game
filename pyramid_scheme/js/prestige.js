@@ -53,6 +53,24 @@ const Prestige = {
       console.log('AP Store permanently unlocked after prestige');
     }
 
+    // Delete all pyramids from all investors (recursive)
+    function clearAllInvestorPyramids(workers) {
+      if (!workers) return;
+      for (const key in workers) {
+        const worker = workers[key];
+        if (worker) {
+          worker.pyramids = 0;
+          // Recursively clear subWorkers
+          if (Array.isArray(worker.subWorkers)) {
+            for (const sub of worker.subWorkers) {
+              clearAllInvestorPyramids({ sub }); // wrap sub in object for recursion
+            }
+          }
+        }
+      }
+    }
+    clearAllInvestorPyramids(GameState.state.workers);
+
     // Track if player had won before reset
     const wasVictory = this.hasWon();
 

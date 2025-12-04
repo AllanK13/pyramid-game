@@ -736,6 +736,9 @@
       padding: 12px 16px 16px;
       gap: 12px;
       overflow-y: auto;
+      /* Add for mobile fix: */
+      box-sizing: border-box;
+      max-height: 100vh;
     }
 
     #ap-store-header {
@@ -1131,6 +1134,14 @@
       justify-content: space-between;
       margin: 2px 0;
     }
+
+    #debug-display.collapsed #debug-display-content {
+      display: none;
+    }
+
+    #debug-display.collapsed #debug-display-toggle-arrow {
+      transform: rotate(-90deg);
+    }
     /* #endregion */
 
     /* #region OFFLINE PROGRESS POPUP */
@@ -1379,7 +1390,7 @@
         transform: translateY(0px);
       }
       50% {
-        transform: translateY(-10px);
+        transform: translateY(-6px);
       }
     }
     /* #endregion */
@@ -1596,6 +1607,10 @@
             </div>
 
             <div class="desert-column" id="col-pyramids">
+              <!-- Collect Pyramids Button -->
+              <button id="btn-collect-pyramids" style="width: 100%; margin-bottom: 10px; padding: 10px 0; border-radius: 10px; background: var(--btn-primary-bg); color: var(--btn-primary-fg); font-weight: bold; font-size: 15px; border: none; box-shadow: 0 2px 8px rgba(0,0,0,0.15); cursor: pointer;">
+                Collect Pyramids
+              </button>
               <div class="pyramid-container">
                 <div class="pyramid-image"></div>
                 <div class="pyramid-overlay">
@@ -1980,33 +1995,37 @@
 
   <!-- #region DEBUG DISPLAY -->
   <div id="debug-display">
-    <h4>🔍 Debug Info</h4>
-    
-    <div class="debug-section">
-      <div class="debug-label">Total Pyramids</div>
-      <div class="debug-value" id="debug-total-pyramids">0</div>
-    </div>
+    <h4 id="debug-display-toggle" style="cursor:pointer;">
+      🔍 Debug Info
+      <span id="debug-display-toggle-arrow" style="font-size:10px; margin-left:6px;">▼</span>
+    </h4>
+    <div id="debug-display-content">
+      <div class="debug-section">
+        <div class="debug-label">Total Pyramids</div>
+        <div class="debug-value" id="debug-total-pyramids">0</div>
+      </div>
 
-    <div class="debug-section">
-      <div class="debug-label">Player</div>
-      <div class="debug-row">
-        <span>Stone Progress:</span>
-        <span class="debug-value" id="debug-player-stone-progress">0/10</span>
+      <div class="debug-section">
+        <div class="debug-label">Player</div>
+        <div class="debug-row">
+          <span>Stone Progress:</span>
+          <span class="debug-value" id="debug-player-stone-progress">0/10</span>
+        </div>
+        <div class="debug-row">
+          <span>Sculpted Stones:</span>
+          <span class="debug-value" id="debug-player-sculpted">0/10</span>
+        </div>
+        <div class="debug-row">
+          <span>Pyramids:</span>
+          <span class="debug-value" id="debug-player-pyramids">0</span>
+        </div>
       </div>
-      <div class="debug-row">
-        <span>Sculpted Stones:</span>
-        <span class="debug-value" id="debug-player-sculpted">0/10</span>
-      </div>
-      <div class="debug-row">
-        <span>Pyramids:</span>
-        <span class="debug-value" id="debug-player-pyramids">0</span>
-      </div>
-    </div>
 
-    <div class="debug-section">
-      <div class="debug-label">Investors</div>
-      <div id="debug-investors-list">
-        <!-- Dynamically populated -->
+      <div class="debug-section">
+        <div class="debug-label">Investors</div>
+        <div id="debug-investors-list">
+          <!-- Dynamically populated -->
+        </div>
       </div>
     </div>
   </div>
@@ -2079,7 +2098,7 @@
   <script>
     // Initialize the game when page loads
     document.addEventListener('DOMContentLoaded', function() {
-      console.log('Pyramid Game - Starting...');
+                     console.log('Pyramid Game - Starting...');
       
       // Ensure GameState exists and has a state object
       if (typeof GameState !== 'undefined') {

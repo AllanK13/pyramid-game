@@ -28,6 +28,12 @@ const UI = {
     // Set up AP upgrade purchase buttons
     this.setupAPUpgradeButtons();
     
+    // Set up collect pyramids button
+    this.setupCollectPyramidsButton();
+    
+    // Set up debug display toggle
+    this.setupDebugDisplayToggle();
+    
     // Initial render
     this.update();
     
@@ -270,6 +276,29 @@ const UI = {
         });
       }
     });
+  },
+
+  setupCollectPyramidsButton() {
+    const btn = document.getElementById('btn-collect-pyramids');
+    if (btn && !btn.dataset.listenerAttached) {
+      btn.dataset.listenerAttached = 'true';
+      btn.addEventListener('click', () => {
+        if (typeof GameEngine !== 'undefined' && GameEngine.collectAllWorkerPyramids) {
+          GameEngine.collectAllWorkerPyramids();
+          this.update();
+        }
+      });
+    }
+  },
+
+  setupDebugDisplayToggle() {
+    const debugDisplay = document.getElementById('debug-display');
+    const toggle = document.getElementById('debug-display-toggle');
+    if (debugDisplay && toggle) {
+      toggle.addEventListener('click', () => {
+        debugDisplay.classList.toggle('collapsed');
+      });
+    }
   },
 
   updatePrestigeButton() {
@@ -569,9 +598,10 @@ const UI = {
 
   updateAPDisplays() {
     const ap = GameState.state.alienPoints || 0;
-    
-    // Show AP displays if player has earned any AP
-    if (ap > 0) {
+    const apStoreUnlocked = GameState.state.apStoreUnlocked === true;
+
+    // Show AP displays if player has earned any AP or AP Store is unlocked
+    if (ap > 0 || apStoreUnlocked) {
       // Production screen AP badge
       const productionBadge = document.getElementById('production-ap-badge');
       const productionAmount = document.getElementById('production-ap-amount');
@@ -579,7 +609,7 @@ const UI = {
         productionBadge.classList.add('visible');
       }
       if (productionAmount) productionAmount.textContent = ap;
-      
+
       // Stats screen AP section
       const statsSection = document.getElementById('stats-ap-section');
       const statsAmount = document.getElementById('stats-ap-amount');

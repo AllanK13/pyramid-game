@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Added victory condition
 - Added victory screen
+- Added Collect Pyramid button
 
 ### Changed
 - Economy tuning
@@ -18,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Fixed mobile functionality**
   - Adjusted mobile screen settings to fit 5 investors
   - Adjusted mobile screen settings on Stats page to show save buttons
+  - Adjusted mobile screen settings on AP Store page
 
 ---
 

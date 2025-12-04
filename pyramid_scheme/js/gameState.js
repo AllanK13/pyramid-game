@@ -30,7 +30,8 @@ const GameState = {
         workerSpeedOnline: 0,
         hireCapacity: 0,
         workerSpeedOffline: 0,
-        apGainBonus: 0
+        apGainBonus: 0,
+        investorDecayRate: 0
       },
       
       // Timestamps
@@ -45,9 +46,11 @@ const GameState = {
     // Keep AP and upgrades, reset everything else
     const savedAP = this.state.alienPoints || 0;
     const savedUpgrades = { ...this.state.apUpgrades };
-    
+    // Ensure investorDecayRate is present
+    if (typeof savedUpgrades.investorDecayRate === 'undefined') {
+      savedUpgrades.investorDecayRate = 0;
+    }
     this.init();
-    
     this.state.alienPoints = savedAP;
     this.state.apUpgrades = savedUpgrades;
   },
@@ -56,10 +59,12 @@ const GameState = {
   prestigeReset() {
     const preservedAP = this.state.alienPoints;
     const preservedUpgrades = { ...this.state.apUpgrades };
-    
+    // Ensure investorDecayRate is present
+    if (typeof preservedUpgrades.investorDecayRate === 'undefined') {
+      preservedUpgrades.investorDecayRate = 0;
+    }
     // Reset everything
     this.init();
-    
     // Restore AP and upgrades
     this.state.alienPoints = preservedAP;
     this.state.apUpgrades = preservedUpgrades;
