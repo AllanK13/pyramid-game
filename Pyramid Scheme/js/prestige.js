@@ -22,6 +22,11 @@ const Prestige = {
     return pyramids >= baseCost;
   },
 
+  // Check if player has won (reached PYRAMID_VICTORY_GOAL)
+  hasWon() {
+    return (GameState.state.pyramids || 0) >= (CONFIG.PYRAMID_VICTORY_GOAL || 1000000000);
+  },
+
   // Perform prestige - reset everything except AP and upgrades
   performPrestige() {
     if (!this.canPrestige()) {
@@ -48,8 +53,23 @@ const Prestige = {
       console.log('AP Store permanently unlocked after prestige');
     }
 
+    // Track if player had won before reset
+    const wasVictory = this.hasWon();
+
     // Reset game state (keeps AP and upgrades)
     GameState.prestigeReset();
+
+    // If player has won, set flag and show win popup after reset
+    if (wasVictory) {
+      GameState.state.hasWon = true;
+      setTimeout(() => {
+        if (typeof UI !== "undefined" && UI.showPostVictoryResetPopup) {
+          UI.showPostVictoryResetPopup();
+        }
+      }, 300);
+    } else {
+      GameState.state.hasWon = false;
+    }
 
     // Update UI
     UI.update();

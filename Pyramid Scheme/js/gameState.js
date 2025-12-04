@@ -85,15 +85,9 @@ const GameState = {
 
   // Get maximum hires for a given tier
   getMaxHiresForTier(tier) {
-    const baseMax = CONFIG.MAX_HIRES_BASE;
-    const capacityBonus = this.state.apUpgrades.hireCapacity;
-    const decay = CONFIG.HIRE_CAPACITY_DECAY;
-    
-    // Tier 0 is the player, tier 1 is first worker level, etc.
-    const adjustedTier = tier - 1; // Convert to 0-indexed
-    
-    const maxHires = baseMax + capacityBonus - (decay * adjustedTier);
-    return Math.max(1, Math.floor(maxHires)); // At least 1
+    // Delegate to CONFIG helper which already applies hireCapacity upgrades,
+    // decay rules and mobile minimums.
+    return CONFIG.getMaxHiresForTier(tier, this.state.apUpgrades || {});
   },
 
   // Get worker speed multiplier from upgrades
@@ -119,5 +113,8 @@ const GameState = {
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = GameState;
 }
+
+// Expose GameState to window object for browser access
+window.GameState = GameState;
 
 console.log('✅ GameState module loaded');

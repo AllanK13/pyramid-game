@@ -22,20 +22,21 @@ const CONFIG = {
   MAX_OFFLINE_TIME: 86400000, // 24 hours in milliseconds
   
   // Prestige settings
-  AP_SELL_BASE_COST: 100000, // Pyramids needed for base AP calculation
-  AP_SELL_SCALING: 'logarithmic', // 'linear', 'logarithmic', or 'power'
-  AP_STACK_SIZE: 100000, // Pyramids per "stack" for bonus calculation
-  AP_VICTORY_GOAL: 1000000000, // AP needed to win
+  AP_SELL_BASE_COST: 10000, // Pyramids needed for base AP calculation
+  // AP_SELL_SCALING: 'logarithmic', // 'linear', 'logarithmic', or 'power'
+  // AP_STACK_SIZE: 100000, // Pyramids per "stack" for bonus calculation
+  // AP_VICTORY_GOAL: 1000000000, // (legacy, not used for win anymore)
+  PYRAMID_VICTORY_GOAL: 1000000000, // Pyramids needed to win
   
   // AP/Prestige settings
-  ap_base_pyramid_cost: 100000,  // Minimum pyramids needed to sell for 1 AP
+  ap_base_pyramid_cost: 10000,  // Minimum pyramids needed to sell for 1 AP
   
   // Offline mode
-  OFFLINE_SPEED_MULTIPLIER_BASE: 0.4, // 40% of online speed when offline
+  OFFLINE_SPEED_MULTIPLIER_BASE: 0.5, // 50% of online speed when offline
   OFFLINE_MIN_TIME_MS: 60000, // Minimum time away (ms) before offline earnings are calculated (default 60s)
   
   // Debug settings
-  debug_mode: false,  // Set to false to hide debug menu
+  debug_mode: true,  // Set to false to hide debug menu
 
   // Mobile UI tweaks
   // Minimum number of investors to show on mobile/small screens to avoid hiding investors due to tight layout
@@ -69,7 +70,7 @@ const CONFIG = {
       description: 'Reduce the decay rate for sub-investors (increases max hires at deeper levels AND improves their production speed)',
       baseCost: 40,
       costScaling: 2.5, // Steep but manageable for active players
-      baseEffect: -0.02, // Reduces decay by 2% per level (e.g., 20% → 18% → 16%)
+      baseEffect: 0, // Reduces decay by 2% per level (e.g., 20% → 18% → 16%)
       effectScaling: -0.02,
       maxLevel: 8, // Max reduction of 16%, bringing decay from 20% down to 4% (total: 24,414 AP)
     },
@@ -105,7 +106,7 @@ const CONFIG = {
       description: 'Improve investor speed while offline',
       baseCost: 200,
       costScaling: 3.0, // Very expensive - major investment for casual players
-      baseEffect: 0.05, // 5% of online speed per level (added to base 40%)
+      baseEffect: 0,    // Start at 0% at level 0 (base offline multiplier is CONFIG.OFFLINE_SPEED_MULTIPLIER_BASE = 0.4)
       effectScaling: 0.05,
       maxLevel: 8 // Max: 40% + 40% = 80% offline efficiency (total: 218,600 AP)
     },
@@ -209,5 +210,7 @@ const Config = CONFIG; // Alias for code that uses Config instead of CONFIG
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = CONFIG;
 }
+
+window.CONFIG = CONFIG;
 
 console.log('✅ Config module loaded');

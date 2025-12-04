@@ -6,6 +6,9 @@ const UI = {
   // DOM element references (cached for performance)
   elements: {},
   
+  // session flag to prevent duplicate popups
+  _victoryPopupShown: false,
+
   // Initialize UI
   init: function() {
     console.log('🎨 UI.init()');
@@ -273,7 +276,8 @@ const UI = {
     const canPrestige = Prestige.canPrestige();
     const prestigeArea = document.getElementById('alien-arrival-area');
     const prestigeBackdrop = document.getElementById('alien-arrival-backdrop');
-    
+    const hasWon = Number(GameState.state.pyramids || 0) >= (CONFIG.PYRAMID_VICTORY_GOAL || 1000000000);
+
     if (canPrestige) {
       // Show prestige button
       if (prestigeArea) prestigeArea.classList.add('visible');
@@ -285,7 +289,24 @@ const UI = {
       
       const pyramidCountEl = document.getElementById('prestige-pyramid-count');
       const apAmountEl = document.getElementById('prestige-ap-amount');
-      
+      const prestigeSellEl = document.querySelector('#btn-prestige .prestige-sell');
+      const prestigeTitleEl = document.querySelector('#alien-arrival-area .prestige-title');
+
+      if (hasWon) {
+        if (prestigeSellEl) {
+          // "Join the aliens" with each word on a new line, font size 12px
+          prestigeSellEl.innerHTML = "Join<br>the<br>aliens";
+          prestigeSellEl.style.fontSize = "14px";
+        }
+        if (prestigeTitleEl) prestigeTitleEl.textContent = "🚀 Ascend to the stars! 🚀";
+      } else {
+        if (prestigeSellEl) {
+          prestigeSellEl.textContent = "SELL";
+          prestigeSellEl.style.fontSize = ""; // Reset to default
+        }
+        if (prestigeTitleEl) prestigeTitleEl.textContent = "🛸 Aliens have arrived! 🛸";
+      }
+
       if (pyramidCountEl) pyramidCountEl.textContent = pyramids.toExponential(2);
       if (apAmountEl) apAmountEl.textContent = apGain;
     } else {
@@ -468,7 +489,15 @@ const UI = {
 
     // Update prestige button visibility and values
     this.updatePrestigeButton();
-    
+
+    // Show victory popup if AP goal is reached and popup not shown (single source of truth)
+    const hasWon = Number(GameState.state.pyramids || 0) >= (CONFIG.PYRAMID_VICTORY_GOAL || 1000000000);
+    if (hasWon && !this._victoryPopupShown) {
+      GameState.state.hasWon = true;
+      this._victoryPopupShown = true;
+      setTimeout(() => this.showVictoryPopup(), 100);
+    }
+
     // Update AP Store tab visibility
     this.updateAPStoreTabVisibility();
   },
@@ -903,7 +932,78 @@ const UI = {
         buyBtn.textContent = isMaxed ? 'MAX LEVEL' : 'Purchase';
       }
     });
-  }
+  },
+
+  // Show the victory popup after winning or after post-victory reset
+  showVictoryPopup(isPostVictory = false) {
+    if (!isPostVictory && this._victoryPopupShown) return;
+    if (!isPostVictory) this._victoryPopupShown = true;
+
+    // Remove any existing popup
+    let existing = document.getElementById(isPostVictory ? 'post-victory-popup' : 'victory-popup');
+    if (existing) existing.remove();
+
+    const overlay = document.createElement('div');
+    overlay.id = isPostVictory ? 'post-victory-popup' : 'victory-popup';
+    overlay.style.position = 'fixed';
+    overlay.style.inset = '0';
+    overlay.style.background = 'rgba(0,0,0,0.85)';
+    overlay.style.display = 'flex';
+    overlay.style.alignItems = 'center';
+    overlay.style.justifyContent = 'center';
+    overlay.style.zIndex = isPostVictory ? '10002' : '10001';
+
+    const container = document.createElement('div');
+    container.style.background = 'linear-gradient(135deg, #222 60%, #ffe082 100%)';
+    container.style.border = '2px solid #ffe082';
+    container.style.borderRadius = '18px';
+    container.style.padding = '36px 28px';
+    container.style.maxWidth = '420px';
+    container.style.width = '90%';
+    container.style.boxShadow = '0 12px 48px #000b, 0 0 30px #ffe08255';
+    container.style.textAlign = 'center';
+
+    if (!isPostVictory) {
+      const title = document.createElement('h2');
+      title.textContent = "You have ascended!";
+      title.style.color = '#ffe082';
+      title.style.marginBottom = '18px';
+      container.appendChild(title);
+    }
+
+    const msg = document.createElement('div');
+    msg.style.fontSize = '18px';
+    msg.style.color = '#fff8e1';
+    msg.style.marginBottom = '24px';
+    msg.textContent = "With so many pyramids at your command, you have ascended to the stars. Join the aliens and take even more pyramids from other planets!";
+    container.appendChild(msg);
+
+    const btn = document.createElement('button');
+    btn.textContent = "Continue";
+    btn.style.padding = '12px 28px';
+    btn.style.fontSize = '16px';
+    btn.style.fontWeight = 'bold';
+    btn.style.background = '#ffe082';
+    btn.style.color = '#222';
+    btn.style.border = 'none';
+    btn.style.borderRadius = '8px';
+    btn.style.cursor = 'pointer';
+    btn.onclick = () => {
+      overlay.remove();
+    };
+
+    container.appendChild(btn);
+    overlay.appendChild(container);
+    document.body.appendChild(overlay);
+  },
+
+  // Show the post-victory reset popup (calls the unified function)
+  showPostVictoryResetPopup() {
+    this.showVictoryPopup(true);
+  },
+
 };
 
 console.log('✅ UI module loaded');
+
+window.UI = UI;

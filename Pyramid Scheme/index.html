@@ -159,7 +159,8 @@
     .ap-display-badge {
       position: absolute;
       top: 12px;
-      right: 16px;
+      left: 16px;
+      right: auto;
       background: rgba(102, 126, 234, 0.3);
       border: 2px solid rgba(245, 199, 106, 0.6);
       border-radius: 8px;
@@ -1492,6 +1493,31 @@
         max-width: 180px;
       }
 
+      /* Ensure stats save buttons are always visible on mobile */
+      #stats-content {
+        padding-bottom: 120px;
+      }
+      .stats-save-buttons {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: var(--card-bg);
+        z-index: 100;
+        box-shadow: 0 -2px 12px rgba(0,0,0,0.25);
+        border-top: 2px solid rgba(245,199,106,0.15);
+        margin: 0;
+        padding: 12px 8px 12px 8px;
+        grid-template-columns: 1fr;
+        border-radius: 0;
+      }
+      .stats-save-btn {
+        width: 100%;
+        margin-bottom: 8px;
+      }
+      .stats-save-btn:last-child {
+        margin-bottom: 0;
+      }
     }
     /* #endregion */
   </style>
@@ -1524,7 +1550,7 @@
         <!-- SKY SECTION -->
         <section id="sky-ap" class="game-section sky-background">
           <!-- AP Display Badge -->
-          <div class="ap-display-badge" id="production-ap-badge">
+          <div class="ap-display-badge" id="production-ap-badge" style="left: 16px; right: auto;">
             <span class="ap-display-icon">👽</span>
             <span id="production-ap-amount">0</span>
             <span>AP</span>
@@ -1996,7 +2022,7 @@
       <button class="debug-btn" id="debug-add-stone-clicks">+9 Stone Clicks</button>
       <button class="debug-btn" id="debug-add-stones">+9 Sculpted Stones</button>
       <button class="debug-btn" id="debug-add-pyramids">+10 Pyramids</button>
-      <button class="debug-btn" id="debug-add-many-pyramids">+1,000,000 Pyramids</button>
+      <button class="debug-btn" id="debug-add-many-pyramids">+100,000,000 Pyramids</button>
       <button class="debug-btn" id="debug-add-ap">+1,000,000 AP</button>
       <hr style="margin: 8px 0; border-color: rgba(255,255,255,0.2);">
       <button class="debug-btn" id="debug-export-save">📤 Export Save</button>
@@ -2028,7 +2054,7 @@
           </div>
           <div class="offline-stat">
             <div class="offline-stat-label">Offline Efficiency:</div>
-            <div class="offline-stat-value" id="offline-efficiency">50%</div>
+            <div class="offline-stat-value" id="offline-efficiency">40%</div>
           </div>
         </div>
         <!-- Tip removed per request -->
@@ -2116,7 +2142,7 @@
           debugMenu.classList.toggle('collapsed');
         });
       }
-      
+
       document.getElementById('debug-add-stone-clicks').addEventListener('click', function() {
         GameState.state.stoneProgress = (GameState.state.stoneProgress || 0) + 9;
         
@@ -2146,9 +2172,9 @@
       });
       
       document.getElementById('debug-add-many-pyramids').addEventListener('click', function() {
-        GameState.state.pyramids = (GameState.state.pyramids || 0) + 1000000;
+        GameState.state.pyramids = (GameState.state.pyramids || 0) + 100000000;
         UI.update();
-        console.log('Added 1,000,000 pyramids, total:', GameState.state.pyramids);
+        console.log('Added 100,000,000 pyramids, total:', GameState.state.pyramids);
       });
       
       document.getElementById('debug-add-ap').addEventListener('click', function() {

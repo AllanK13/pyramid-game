@@ -30,7 +30,7 @@
   - First pyramid built
   - First investor hired
   - Reach 1,000 pyramids
-  - Reach 1,000,000 pyramids (prestige threshold)
+  - Reach 10,000 pyramids (prestige threshold)
   - Max out an investor's hires
   - Complete a full pyramid chain (5+ depth)
   - Earn first AP

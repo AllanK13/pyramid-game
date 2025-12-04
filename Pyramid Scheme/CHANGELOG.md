@@ -8,9 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.11]
 
 ### Added
+- Added victory condition
+- Added victory screen
 
 ### Changed
-
+- Economy tuning
 
 ### Fixed
 - **Fixed mobile functionality**
@@ -286,6 +288,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **v0.01** - Initial implementation with core gameplay, UI, and investor system
 - **v0.02** - Added prestige system, recursive investors, save/load functionality, AP upgrade display fixes, and various balance and UI improvements
 - **v0.03** - Debug menu improvements, version bump, and preparation for next development phase
+- **v0.10** - Initial release
+- **v0.11** - Victory condition added, economy tuning, mobile optimizations
 
 [Unreleased]: https://github.com/yourusername/pyramid-scheme/compare/v0.03...HEAD
 [0.03]: https://github.com/yourusername/pyramid-scheme/releases/tag/v0.03
