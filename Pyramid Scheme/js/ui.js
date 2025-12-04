@@ -276,9 +276,11 @@ const UI = {
     const canPrestige = Prestige.canPrestige();
     const prestigeArea = document.getElementById('alien-arrival-area');
     const prestigeBackdrop = document.getElementById('alien-arrival-backdrop');
+    // Show the alien pyramid (prestige) button if player has at least the minimum pyramids for 1 AP
+    const showPrestige = (GameState.state.pyramids || 0) >= (CONFIG.ap_base_pyramid_cost || 10000);
     const hasWon = Number(GameState.state.pyramids || 0) >= (CONFIG.PYRAMID_VICTORY_GOAL || 1000000000);
 
-    if (canPrestige) {
+    if (showPrestige) {
       // Show prestige button
       if (prestigeArea) prestigeArea.classList.add('visible');
       if (prestigeBackdrop) prestigeBackdrop.classList.add('visible');

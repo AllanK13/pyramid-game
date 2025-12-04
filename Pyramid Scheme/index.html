@@ -2021,7 +2021,7 @@
     <div id="debug-menu-content">
       <button class="debug-btn" id="debug-add-stone-clicks">+9 Stone Clicks</button>
       <button class="debug-btn" id="debug-add-stones">+9 Sculpted Stones</button>
-      <button class="debug-btn" id="debug-add-pyramids">+10 Pyramids</button>
+      <button class="debug-btn" id="debug-add-pyramids">+1,000 Pyramids</button>
       <button class="debug-btn" id="debug-add-many-pyramids">+100,000,000 Pyramids</button>
       <button class="debug-btn" id="debug-add-ap">+1,000,000 AP</button>
       <hr style="margin: 8px 0; border-color: rgba(255,255,255,0.2);">
@@ -2166,9 +2166,9 @@
       });
       
       document.getElementById('debug-add-pyramids').addEventListener('click', function() {
-        GameState.state.pyramids = (GameState.state.pyramids || 0) + 10;
+        GameState.state.pyramids = (GameState.state.pyramids || 0) + 1000;
         UI.update();
-        console.log('Added 10 pyramids, total:', GameState.state.pyramids);
+        console.log('Added 1000 pyramids, total:', GameState.state.pyramids);
       });
       
       document.getElementById('debug-add-many-pyramids').addEventListener('click', function() {
