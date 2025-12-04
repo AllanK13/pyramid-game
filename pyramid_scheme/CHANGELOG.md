@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - **Fixed mobile functionality**
   - Adjusted mobile screen settings to fit 5 investors
+  - Adjusted mobile screen settings on Stats page to show save buttons
 
 ---
 
