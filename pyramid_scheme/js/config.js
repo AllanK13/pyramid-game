@@ -59,8 +59,8 @@ const CONFIG = {
     hireCapacity: {
       name: 'Increased Hire Capacity',
       description: 'Increases the number of investors you can hire (your investors and sub-investors increase proportionally)',
-      baseCost: 50,
-      costScaling: 2.0, // Expensive but accessible for active players
+      baseCost: 10,
+      costScaling: 2.5, // Expensive but accessible for active players
       baseEffect: 0,
       effectScaling: 1, // Each level adds +1 to max hires
       maxLevel: 5 // Max +5 additional hires (total: 1,550 AP)
@@ -68,7 +68,7 @@ const CONFIG = {
     investorDecayRate: {
       name: 'Investor Decay Reduction',
       description: 'Reduce the decay rate for sub-investors (increases max hires at deeper levels AND improves their production speed)',
-      baseCost: 40,
+      baseCost: 15,
       costScaling: 2.5, // Steep but manageable for active players
       baseEffect: 0, // Reduces decay by 2% per level (e.g., 20% → 18% → 16%)
       effectScaling: -0.02,
@@ -78,9 +78,9 @@ const CONFIG = {
       name: 'Investor Speed Training',
       description: 'Investors sculpt stones faster while online',
       baseCost: 1,
-      costScaling: 1.05,
+      costScaling: 1.1, // Gentle scaling - early game investment
       baseEffect: 0, // Start at 0% bonus
-      effectScaling: 0.01, // Each level adds +1% speed
+      effectScaling: 0.02, // Each level adds +2% speed
       maxLevel: 999999 // Effectively unlimited
     },
     startingStones: {
@@ -96,9 +96,9 @@ const CONFIG = {
       name: 'Legacy Pyramids',
       description: 'Start each run with bonus Pyramids',
       baseCost: 5,
-      costScaling: 1.1, // Very gentle 10% scaling
+      costScaling: 1.2,
       baseEffect: 0,
-      effectScaling: 1, // Each level adds +1 pyramids
+      effectScaling: 2, // Each level adds +2 pyramids
       maxLevel: 500 // Practical limit
     },
     workerSpeedOffline: {
@@ -106,15 +106,15 @@ const CONFIG = {
       description: 'Improve investor speed while offline',
       baseCost: 200,
       costScaling: 3.0, // Very expensive - major investment for casual players
-      baseEffect: 0,    // Start at 0% at level 0 (base offline multiplier is CONFIG.OFFLINE_SPEED_MULTIPLIER_BASE = 0.4)
+      baseEffect: 0,    // Start at 0% at level 0 (base offline multiplier is CONFIG.OFFLINE_SPEED_MULTIPLIER_BASE = 0.5)
       effectScaling: 0.05,
       maxLevel: 8 // Max: 40% + 40% = 80% offline efficiency (total: 218,600 AP)
     },
     apGainBonus: {
       name: 'Alien Bargaining',
       description: 'Gain more AP when selling pyramids',
-      baseCost: 10,
-      costScaling: 1.4, // Gentle scaling - early game investment
+      baseCost: 50,
+      costScaling: 1.5, // Gentle scaling - early game investment
       baseEffect: 0, // Start at 0% bonus
       effectScaling: 0.1, // Each level adds +10%
       maxLevel: 20 // Cap at +200% AP (3x total)

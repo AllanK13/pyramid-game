@@ -3,5 +3,5 @@ Click the stone next to you to sculpt it. Sculpt 10 stones and they will automat
 When you've built at least 10 pyramids, you can hire an investor! To hire more investors, you'll need to build more pyramids. You can have a maximum of 5 investors. 
 Investors will work on their own pyramids, one stone at a time, at a rate of 1 click per second. Once they build 10 pyramids, they will hire their own sub-investors. 
 Sub-investors will operate  in the background just like investors, with their contributions adding to the initial investor at the top of their lineage. 
-However, nobody is as good a CEO as you. Your investors, and their sub-investors, will be less efficient in working and hiring the further they are from you. 
+However, nobody is as good a CEO as you. Your investors, and their sub-investors, will be less efficient in both working and hiring the further they are from you. 
 Cover the desert with pyramids and reap the benefits of owning real estate!

@@ -4,6 +4,8 @@
 
 ### High Priority (For v0.11)
 
+- check when speed is possible for 24 hours to beat game - 11,500/second?
+
 - [ ] **Visual/Audio Feedback**
   - [ ] Add particle effects when pyramids complete
   - [ ] Add notification when investor hired

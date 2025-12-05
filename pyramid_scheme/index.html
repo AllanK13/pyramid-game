@@ -1541,23 +1541,26 @@
     <header id="top-nav">
       <div id="game-title">Pyramid Scheme</div>
       <div id="top-tabs">
-        <button class="top-tab active" data-tab-target="production">
-          <span class="dot"></span> Production
-        </button>
-        <button class="top-tab" data-tab-target="stats">
-          <span class="dot"></span> Stats
-        </button>
-        <button class="top-tab hidden" data-tab-target="ap-store" id="ap-store-tab">
-          <span class="dot"></span> AP Store
-        </button>
+        <button class="top-tab active" data-tab-target="production"><span class="dot"></span> Production</button>
+        <button class="top-tab" data-tab-target="stats"><span class="dot"></span> Stats</button>
+        <button class="top-tab" data-tab-target="instructions"><span class="dot"></span> Instructions</button>
+        <button class="top-tab hidden" data-tab-target="ap-store" id="ap-store-tab"><span class="dot"></span> AP Store</button>
       </div>
     </header>
     <!-- #endregion -->
 
     <!-- #region TAB CONTENT ROOT -->
     <main id="tab-root">
+
+      <!-- #region INSTRUCTIONS TAB -->
+      <section id="instructions-screen" class="tab-screen" style="overflow-y:auto; max-height:100%; padding:32px 24px 24px 24px;">
+        <h2 style="color:var(--accent);margin-bottom:18px;">Instructions</h2>
+        <div id="instructions-content" style="white-space:pre-line; font-size:16px; color:var(--text-main); line-height:1.7;"></div>
+      </section>
+      <!-- #endregion -->
       <!-- #region PRODUCTION TAB -->
       <section id="production-screen" class="tab-screen active">
+      <!-- #endregion -->
         <!-- SKY SECTION -->
         <section id="sky-ap" class="game-section sky-background">
           <!-- AP Display Badge -->
@@ -1883,7 +1886,7 @@
             <div class="ap-upgrade-card" data-upgrade-id="workerSpeedOnline">
               <div class="ap-upgrade-title">Investor Speed Training</div>
               <div class="ap-upgrade-effect">
-                Investors sculpt stones <span class="effect-value">+1%</span> faster.
+                Investors sculpt stones <span class="effect-value">+2%</span> faster.
               </div>
               <div class="ap-upgrade-cost">
                 Cost: <span class="ap-cost">?</span> AP
@@ -2098,18 +2101,66 @@
   <script>
     // Initialize the game when page loads
     document.addEventListener('DOMContentLoaded', function() {
-                     console.log('Pyramid Game - Starting...');
-      
+      console.log('Pyramid Game - Starting...');
+
+      // Tab navigation logic for new Instructions tab
+      const tabButtons = document.querySelectorAll('.top-tab');
+      const tabScreens = document.querySelectorAll('.tab-screen');
+      function showTab(tabName) {
+        tabButtons.forEach(btn => {
+          if (btn.dataset.tabTarget === tabName) btn.classList.add('active');
+          else btn.classList.remove('active');
+        });
+        tabScreens.forEach(screen => {
+          if (screen.id === tabName + '-screen') screen.classList.add('active');
+          else screen.classList.remove('active');
+        });
+        // Special: load instructions if needed
+        if (tabName === 'instructions') {
+          loadInstructionsContent();
+        }
+      }
+      tabButtons.forEach(btn => {
+        btn.addEventListener('click', () => showTab(btn.dataset.tabTarget));
+      });
+
+      // Show production tab by default
+      showTab('production');
+
+      // If Instructions tab is already active (e.g. after reload), load its content
+      const instructionsTab = document.querySelector('.top-tab[data-tab-target="instructions"]');
+      if (instructionsTab && instructionsTab.classList.contains('active')) {
+        loadInstructionsContent();
+      }
+
+      // Load Instructions page
+      window.loadInstructionsContent = function() {
+        const contentDiv = document.getElementById('instructions-content');
+        if (!contentDiv) {
+          // Show a visible error in the Instructions tab
+          const fallback = document.createElement('div');
+          fallback.style.color = 'red';
+          fallback.style.fontWeight = 'bold';
+          fallback.textContent = 'DEBUG: #instructions-content element NOT FOUND!';
+          // Try to append to the instructions tab section
+          var section = document.getElementById('instructions-screen') || document.body;
+          section.appendChild(fallback);
+          return;
+        }
+        contentDiv.textContent = 'You are an entrepeneur. Where others see desert, you see opportunity. All you need to do is make some buildings. What better than the oldest, sturdiest structure, the pyramid?\n\nClick the stone next to you to sculpt it. Sculpt 10 stones and they will automatically build a pyramid.\n\nWhen you\'ve built at least 10 pyramids, you can hire an investor! To hire more investors, you\'ll need to build more pyramids. You can have a maximum of 5 investors.\n\nInvestors will work on their own pyramids, one stone at a time, at a rate of 1 click per second. Once they build 10 pyramids, they will hire their own sub-investors.\n\nSub-investors will operate  in the background just like investors, with their contributions adding to the initial investor at the top of their lineage.\n\nHowever, nobody is as good a CEO as you. Your investors, and their sub-investors, will be less efficient in working and hiring the further they are from you.\n\nCover the desert with pyramids and reap the benefits of owning real estate!';
+      }
+
+      // ...existing game initialization code...
       // Ensure GameState exists and has a state object
       if (typeof GameState !== 'undefined') {
         if (!GameState.state) {
           GameState.state = {};
         }
       }
-      
+
       // Try to load saved game
       const loadResult = SaveLoad.load();
-      
+
       if (!loadResult || !loadResult.loaded) {
         // New game - initialize state
         if (typeof GameState !== 'undefined' && GameState.init) {
@@ -2118,7 +2169,7 @@
         }
       } else {
         console.log('Saved game loaded');
-        
+
         // Show offline progress popup if there was time away
         if (loadResult.offlineData) {
           // Show popup after a short delay to ensure UI is ready
@@ -2127,24 +2178,24 @@
           }, 500);
         }
       }
-      
+
       console.log('Current pyramids:', GameState.state.pyramids);
       console.log('Worker states:', GameState.state.workers);
-      
+
       // Initialize UI
       UI.init();
-      
+
       // Start the game engine
       GameEngine.start();
-      
+
       // Start autosave
       SaveLoad.startAutosave();
-      
+
       // Save on page unload
       window.addEventListener('beforeunload', function() {
         SaveLoad.save();
       });
-      
+
       // Debug menu - always show if CONFIG.debug_mode is true
       const debugMenu = document.getElementById('debug-menu');
       const debugDisplay = document.getElementById('debug-display');
@@ -2153,7 +2204,7 @@
         debugDisplay.classList.add('visible');
         console.log('Debug menu and display enabled');
       }
-      
+
       // Debug menu collapse toggle
       const debugToggle = document.getElementById('debug-toggle');
       if (debugToggle) {
@@ -2164,59 +2215,59 @@
 
       document.getElementById('debug-add-stone-clicks').addEventListener('click', function() {
         GameState.state.stoneProgress = (GameState.state.stoneProgress || 0) + 9;
-        
+
         // Trigger overflow conversion
         const required = CONFIG.CLICKS_PER_STONE || 10;
         while (GameState.state.stoneProgress >= required) {
           GameState.state.stoneProgress -= required;
           GameState.state.sculptedStones = (GameState.state.sculptedStones || 0) + 1;
         }
-        
+
         GameEngine.convertStonesToPyramids();
         UI.update();
         console.log('Added 9 stone clicks, progress:', GameState.state.stoneProgress);
       });
-      
+
       document.getElementById('debug-add-stones').addEventListener('click', function() {
         GameState.state.sculptedStones = (GameState.state.sculptedStones || 0) + 9;
         GameEngine.convertStonesToPyramids();
         UI.update();
         console.log('Added 9 sculpted stones, total:', GameState.state.sculptedStones);
       });
-      
+
       document.getElementById('debug-add-pyramids').addEventListener('click', function() {
         GameState.state.pyramids = (GameState.state.pyramids || 0) + 1000;
         UI.update();
         console.log('Added 1000 pyramids, total:', GameState.state.pyramids);
       });
-      
+
       document.getElementById('debug-add-many-pyramids').addEventListener('click', function() {
         GameState.state.pyramids = (GameState.state.pyramids || 0) + 100000000;
         UI.update();
         console.log('Added 100,000,000 pyramids, total:', GameState.state.pyramids);
       });
-      
+
       document.getElementById('debug-add-ap').addEventListener('click', function() {
         GameState.state.alienPoints = (GameState.state.alienPoints || 0) + 1000000;
         UI.update();
         console.log('Added 1,000,000 AP, total:', GameState.state.alienPoints);
       });
-      
+
       // Export save button
       document.getElementById('debug-export-save').addEventListener('click', function() {
         SaveLoad.exportSaveFile();
       });
-      
+
       // Import save button
       document.getElementById('debug-import-save').addEventListener('click', function() {
         document.getElementById('import-file-input').click();
       });
-      
+
       // Handle file import
       document.getElementById('import-file-input').addEventListener('change', function(e) {
         const file = e.target.files[0];
         if (!file) return;
-        
+
         const reader = new FileReader();
         reader.onload = function(event) {
           const content = event.target.result;
@@ -2226,29 +2277,29 @@
           }
         };
         reader.readAsText(file);
-        
+
         // Reset input
         e.target.value = '';
       });
-      
+
       // Delete save button
       document.getElementById('debug-delete-save').addEventListener('click', function() {
         SaveLoad.deleteSave();
       });
-      
+
       // Stats tab save buttons
       document.getElementById('stats-export-save').addEventListener('click', function() {
         SaveLoad.exportSaveFile();
       });
-      
+
       document.getElementById('stats-import-save').addEventListener('click', function() {
         document.getElementById('import-file-input').click();
       });
-      
+
       document.getElementById('stats-delete-save').addEventListener('click', function() {
         SaveLoad.deleteSave();
       });
-      
+
       console.log('Pyramid Game - Ready!');
     });
   </script>

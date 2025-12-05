@@ -41,27 +41,7 @@ const UI = {
   },
 
   setupTabs() {
-    const tabs = document.querySelectorAll('.top-tab');
-    const screens = document.querySelectorAll('.tab-screen');
-    
-    tabs.forEach(tab => {
-      tab.addEventListener('click', () => {
-        const targetId = tab.getAttribute('data-tab-target');
-        
-        // Update active tab
-        tabs.forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
-        
-        // Update active screen
-        screens.forEach(screen => {
-          if (screen.id === `${targetId}-screen`) {
-            screen.classList.add('active');
-          } else {
-            screen.classList.remove('active');
-          }
-        });
-      });
-    });
+    // Tab switching is handled in index.html; nothing needed here.
   },
 
   setupMainStoneButton() {

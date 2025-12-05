@@ -8,9 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.11]
 
 ### Added
-- Added victory condition
-- Added victory screen
-- Added Collect Pyramid button
+- Victory condition
+- Victory screen
+- Collect Pyramid button
+- Instructions page
 
 ### Changed
 - Economy tuning
