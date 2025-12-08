@@ -167,7 +167,7 @@ const UI = {
         <div class="worker-hires-box">
           <span class="worker-hires-count" id="worker${investorNum}-hires">0</span>
         </div>
-        <span class="worker-hires-label">Investors</span>
+        <span class="worker-hires-label">Sub-Investors</span>
       </div>
       <div class="worker-section-connector right">
         <span class="connector-text">and combined made</span>
