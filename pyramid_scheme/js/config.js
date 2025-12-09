@@ -108,7 +108,7 @@ const CONFIG = {
       costScaling: 2.2, // Very expensive - major investment for casual players
       baseEffect: 0,    // Start at 0% at level 0 (base offline multiplier is CONFIG.OFFLINE_SPEED_MULTIPLIER_BASE = 0.5)
       effectScaling: 0.05,
-      maxLevel: 8 // Max: 40% + 40% = 80% offline efficiency (total: 218,600 AP)
+      maxLevel: 8 // Max: 50% + 40% = 90% offline efficiency (total: 218,600 AP)
     },
     apGainBonus: {
       name: 'Alien Bargaining',
