@@ -32,7 +32,7 @@ const CONFIG = {
   ap_base_pyramid_cost: 10000,  // Minimum pyramids needed to sell for 1 AP
   
   // Offline mode
-  OFFLINE_SPEED_MULTIPLIER_BASE: 0.5, // 50% of online speed when offline
+  OFFLINE_SPEED_MULTIPLIER_BASE: 0.8, // 80% of online speed when offline
   OFFLINE_MIN_TIME_MS: 60000, // Minimum time away (ms) before offline earnings are calculated (default 60s)
   
   // Debug settings
@@ -104,11 +104,11 @@ const CONFIG = {
     workerSpeedOffline: {
       name: 'Offline Efficiency',
       description: 'Improve investor speed while offline',
-      baseCost: 100,
-      costScaling: 2.2, // Very expensive - major investment for casual players
+      baseCost: 50,
+      costScaling: 2, // Very expensive - major investment for casual players
       baseEffect: 0,    // Start at 0% at level 0 (base offline multiplier is CONFIG.OFFLINE_SPEED_MULTIPLIER_BASE = 0.5)
       effectScaling: 0.05,
-      maxLevel: 8 // Max: 50% + 40% = 90% offline efficiency (total: 218,600 AP)
+      maxLevel: 4 // Max: 80% + 20% = 100% offline efficiency (total: 218,600 AP)
     },
     apGainBonus: {
       name: 'Alien Bargaining',
