@@ -36,7 +36,7 @@ const CONFIG = {
   OFFLINE_MIN_TIME_MS: 60000, // Minimum time away (ms) before offline earnings are calculated (default 60s)
   
   // Debug settings
-  debug_mode: true,  // Set to false to hide debug menu
+  debug_mode: false,  // Set to false to hide debug menu
 
   // Mobile UI tweaks
   // Minimum number of investors to show on mobile/small screens to avoid hiding investors due to tight layout
@@ -106,7 +106,7 @@ const CONFIG = {
       description: 'Improve investor speed while offline',
       baseCost: 50,
       costScaling: 2, // Very expensive - major investment for casual players
-      baseEffect: 0,    // Start at 0% at level 0 (base offline multiplier is CONFIG.OFFLINE_SPEED_MULTIPLIER_BASE = 0.5)
+      baseEffect: 0,    // Start at 0% at level 0 (base offline multiplier is CONFIG.OFFLINE_SPEED_MULTIPLIER_BASE = 0.8)
       effectScaling: 0.05,
       maxLevel: 4 // Max: 80% + 20% = 100% offline efficiency (total: 218,600 AP)
     },
