@@ -37,6 +37,7 @@ const CONFIG = {
   
   // Debug settings
   debug_mode: false,  // Set to false to hide debug menu
+  DEBUG_OFFLINE_PARITY: false, // Set to true to test analytic vs per-second offline simulation (dev only)
 
   // Mobile UI tweaks
   // Minimum number of investors to show on mobile/small screens to avoid hiding investors due to tight layout

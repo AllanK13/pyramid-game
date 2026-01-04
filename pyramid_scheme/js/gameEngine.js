@@ -92,6 +92,113 @@ const GameEngine = {
     }
   },
 
+  // Compute offline production for a single worker (and its subtree) using closed-form math
+  // This avoids per-second simulation and calculates aggregate production over the full time period
+  computeOfflineForWorkerAggregate(worker, effectiveSeconds, speedMultiplier, depth = 0) {
+    if (!worker || !worker.unlocked) {
+      return { pyramidsGained: 0, finalState: null };
+    }
+
+    const clicksPerStone = CONFIG.CLICKS_PER_STONE || 10;
+    const stonesPerPyramid = CONFIG.STONES_PER_PYRAMID || 10;
+    const decayRate = CONFIG.getEffectiveDecayRate(GameState.state.apUpgrades);
+    const decayMultiplier = Math.pow(1 - decayRate, depth + 1);
+    
+    // Calculate max hires with decay
+    const baseCapacity = CONFIG.BASE_HIRE_CAPACITY || 5;
+    const hireCapacityLevel = GameState.state.apUpgrades?.hireCapacity || 0;
+    const hireCapacityBonus = CONFIG.getUpgradeEffect('hireCapacity', hireCapacityLevel);
+    const baseMaxHires = baseCapacity + hireCapacityBonus;
+    const maxHires = Math.floor(baseMaxHires * decayMultiplier);
+    
+    // Check if worker should stop producing (has maxed out hires)
+    const currentSubWorkers = worker.subWorkers?.length || 0;
+    const hasReachedMaxHires = currentSubWorkers >= maxHires;
+    
+    let totalPyramidsGained = 0;
+    
+    // If worker has maxed hires and stops after max, only compute subtree production
+    if (CONFIG.WORKER_STOPS_AFTER_MAX_HIRES && hasReachedMaxHires && maxHires > 0) {
+      // Worker doesn't produce, but sub-workers do
+      if (worker.subWorkers && worker.subWorkers.length > 0) {
+        for (let subWorker of worker.subWorkers) {
+          const subResult = this.computeOfflineForWorkerAggregate(subWorker, effectiveSeconds, speedMultiplier, depth + 1);
+          totalPyramidsGained += subResult.pyramidsGained;
+        }
+      }
+      return { pyramidsGained: totalPyramidsGained, finalState: worker };
+    }
+    
+    // Compute production for this worker
+    const workerClickInterval = CONFIG.WORKER_CLICK_INTERVAL || 1000;
+    const clicksPerSecond = (1000 / workerClickInterval) * decayMultiplier * speedMultiplier;
+    const totalClicks = clicksPerSecond * effectiveSeconds;
+    
+    // Add existing progress
+    let stoneProgress = (worker.stoneProgress || 0) + totalClicks;
+    let sculptedStones = worker.sculptedStones || 0;
+    let pyramids = worker.pyramids || 0;
+    
+    // Convert stone progress to sculpted stones
+    const stonesProduced = Math.floor(stoneProgress / clicksPerStone);
+    stoneProgress = stoneProgress % clicksPerStone;
+    sculptedStones += stonesProduced;
+    
+    // Convert sculpted stones to pyramids
+    const pyramidsProduced = Math.floor(sculptedStones / stonesPerPyramid);
+    sculptedStones = sculptedStones % stonesPerPyramid;
+    pyramids += pyramidsProduced;
+    
+    totalPyramidsGained += pyramidsProduced;
+    
+    // Update worker state
+    worker.stoneProgress = stoneProgress;
+    worker.sculptedStones = sculptedStones;
+    worker.pyramids = pyramids;
+    worker.decayMultiplier = decayMultiplier;
+    worker.depth = depth;
+    
+    // Handle hiring of sub-workers (simplified - hire all at once based on pyramids)
+    if (maxHires > 0 && !hasReachedMaxHires) {
+      const pyramidsPerHire = CONFIG.WORKER_PYRAMIDS_PER_ADDITIONAL_HIRE || 10;
+      const shouldHaveSubWorkers = Math.min(
+        Math.floor(pyramids / pyramidsPerHire),
+        maxHires
+      );
+      
+      // Create any missing sub-workers
+      if (!worker.subWorkers) worker.subWorkers = [];
+      while (worker.subWorkers.length < shouldHaveSubWorkers) {
+        const newSubWorker = {
+          tier: (worker.tier || 1) + 1,
+          parentId: worker.id || 'unknown',
+          unlocked: true,
+          hires: 0,
+          pyramids: 0,
+          stoneProgress: 0,
+          sculptedStones: 0,
+          lastTickTime: Date.now(),
+          subWorkers: [],
+          id: `${worker.tier || 1}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+          depth: depth + 1,
+          decayMultiplier: Math.pow(1 - decayRate, depth + 2)
+        };
+        worker.subWorkers.push(newSubWorker);
+      }
+      worker.hires = worker.subWorkers.length;
+    }
+    
+    // Recursively compute production for existing sub-workers
+    if (worker.subWorkers && worker.subWorkers.length > 0) {
+      for (let subWorker of worker.subWorkers) {
+        const subResult = this.computeOfflineForWorkerAggregate(subWorker, effectiveSeconds, speedMultiplier, depth + 1);
+        totalPyramidsGained += subResult.pyramidsGained;
+      }
+    }
+    
+    return { pyramidsGained: totalPyramidsGained, finalState: worker };
+  },
+
   // Calculate offline progress - simulates production at 50% efficiency
   calculateOfflineProgress(timeAwayMs) {
     // Cap offline time to 24 hours
@@ -104,43 +211,63 @@ const GameEngine = {
     
     // Calculate effective time with offline multiplier
     const effectiveTimeMs = cappedTimeMs * offlineMultiplier;
-    
-    // Simulate production by running mini-ticks
-    // We'll simulate in 1-second intervals for accuracy
-    const secondsToSimulate = Math.floor(effectiveTimeMs / 1000);
-    const tickSize = 1000; // 1 second per tick
+    const effectiveSeconds = effectiveTimeMs / 1000;
     
     let pyramidsGained = 0;
     const initialPyramids = GameState.state.pyramids || 0;
     
-    // Take a snapshot of current worker state
-    const workerSnapshot = JSON.parse(JSON.stringify(GameState.state.workers || {}));
+    // Get worker speed multiplier
+    const workerSpeedLevel = GameState.state.apUpgrades?.workerSpeedOnline || 0;
+    const speedBonus = CONFIG.getUpgradeEffect('workerSpeedOnline', workerSpeedLevel);
+    const speedMultiplier = 1.0 + speedBonus;
     
-    // Simulate production
-    for (let i = 0; i < secondsToSimulate; i++) {
-      const now = Date.now() - (secondsToSimulate - i) * 1000;
-      
-      // Update all workers
-      const baseCapacity = CONFIG.BASE_HIRE_CAPACITY || 5;
-      const hireCapacityLevel = GameState.state.apUpgrades?.hireCapacity || 0;
-      const hireCapacityBonus = CONFIG.getUpgradeEffect('hireCapacity', hireCapacityLevel);
-      const maxInvestors = baseCapacity + hireCapacityBonus;
-      
-      for (let j = 1; j <= maxInvestors; j++) {
-        const workerId = j.toString();
+    // Get max investors
+    const baseCapacity = CONFIG.BASE_HIRE_CAPACITY || 5;
+    const hireCapacityLevel = GameState.state.apUpgrades?.hireCapacity || 0;
+    const hireCapacityBonus = CONFIG.getUpgradeEffect('hireCapacity', hireCapacityLevel);
+    const maxInvestors = baseCapacity + hireCapacityBonus;
+    
+    // Use closed-form aggregate calculation (fast path)
+    if (!CONFIG.DEBUG_OFFLINE_PARITY) {
+      // Process each top-level worker using analytic formula
+      for (let i = 1; i <= maxInvestors; i++) {
+        const workerId = i.toString();
         const worker = GameState.state.workers[workerId];
         
         if (!worker || !worker.unlocked) continue;
         
-        // Update this worker recursively (using online speed since we already applied offline multiplier to time)
-        this.updateWorkerRecursive(worker, now);
+        // Compute production for this worker and its entire subtree
+        const result = this.computeOfflineForWorkerAggregate(worker, effectiveSeconds, speedMultiplier, 0);
+        pyramidsGained += result.pyramidsGained;
       }
       
-      // Collect pyramids from workers every tick
+      // Collect all pyramids from workers after offline calculation
       this.collectAllWorkerPyramids();
+    } else {
+      // DEBUG MODE: Use old per-second simulation for comparison
+      console.warn('⚠️ DEBUG_OFFLINE_PARITY enabled - using slow per-second simulation');
+      
+      const secondsToSimulate = Math.floor(effectiveSeconds);
+      const workerSnapshot = JSON.parse(JSON.stringify(GameState.state.workers || {}));
+      
+      for (let i = 0; i < secondsToSimulate; i++) {
+        const now = Date.now() - (secondsToSimulate - i) * 1000;
+        
+        for (let j = 1; j <= maxInvestors; j++) {
+          const workerId = j.toString();
+          const worker = GameState.state.workers[workerId];
+          
+          if (!worker || !worker.unlocked) continue;
+          
+          this.updateWorkerRecursive(worker, now);
+        }
+        
+        this.collectAllWorkerPyramids();
+      }
+      
+      pyramidsGained = (GameState.state.pyramids || 0) - initialPyramids;
+      console.log(`DEBUG: Per-second simulation gave ${pyramidsGained} pyramids`);
     }
-    
-    pyramidsGained = (GameState.state.pyramids || 0) - initialPyramids;
     
     return {
       timeAway: cappedTimeMs,
