@@ -35,7 +35,7 @@ const CONFIG = {
   OFFLINE_SPEED_MULTIPLIER_BASE: 0.8, // 80% of online speed when offline
   OFFLINE_MIN_TIME_MS: 60000, // Minimum time away (ms) before offline earnings are calculated (default 60s)
   // Offline calculation safeguards (limits for analytic simulation)
-  OFFLINE_MAX_HIRE_SIMULATION: 20, // Max synthetic sub-workers simulated per worker during offline calc
+  OFFLINE_MAX_HIRE_SIMULATION: 10, // Max synthetic sub-workers simulated per worker during offline calc
   
   // Debug settings
   debug_mode: false,  // Set to false to hide debug menu
