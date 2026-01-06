@@ -166,26 +166,48 @@ const GameEngine = {
         maxHires
       );
       
-      // Create any missing sub-workers
+      // Don't materialize large numbers of sub-worker objects during offline calculation.
+      // Instead, record expected hires and analytically simulate a capped number of synthetic sub-workers.
+      worker.hires = shouldHaveSubWorkers;
       if (!worker.subWorkers) worker.subWorkers = [];
-      while (worker.subWorkers.length < shouldHaveSubWorkers) {
-        const newSubWorker = {
-          tier: (worker.tier || 1) + 1,
-          parentId: worker.id || 'unknown',
-          unlocked: true,
-          hires: 0,
-          pyramids: 0,
-          stoneProgress: 0,
-          sculptedStones: 0,
-          lastTickTime: Date.now(),
-          subWorkers: [],
-          id: `${worker.tier || 1}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-          depth: depth + 1,
-          decayMultiplier: Math.pow(1 - decayRate, depth + 2)
-        };
-        worker.subWorkers.push(newSubWorker);
+
+      const simulateCap = CONFIG.OFFLINE_MAX_HIRE_SIMULATION || 20;
+      const simulateCount = Math.min(shouldHaveSubWorkers, simulateCap);
+
+      // Simulate a limited number of synthetic sub-workers to estimate subtree production.
+      if (simulateCount > 0) {
+        let simulatedPyramids = 0;
+        for (let si = 0; si < simulateCount; si++) {
+          const synthetic = {
+            tier: (worker.tier || 1) + 1,
+            unlocked: true,
+            hires: 0,
+            pyramids: 0,
+            stoneProgress: 0,
+            sculptedStones: 0,
+            lastTickTime: Date.now(),
+            subWorkers: [],
+            depth: depth + 1
+          };
+
+          const subResult = this.computeOfflineForWorkerAggregate(synthetic, effectiveSeconds, speedMultiplier, depth + 1);
+          simulatedPyramids += subResult.pyramidsGained;
+        }
+
+        // Record simulated pyramids on the worker so collection step can pick them up
+        worker.syntheticPyramids = (worker.syntheticPyramids || 0) + simulatedPyramids;
+
+        // If there are more hires than we simulated, approximate the remainder using the average simulated value.
+        if (shouldHaveSubWorkers > simulateCount && simulatedPyramids > 0) {
+          const avgPer = simulatedPyramids / simulateCount;
+          const remaining = shouldHaveSubWorkers - simulateCount;
+          const approx = Math.floor(avgPer * remaining);
+          worker.syntheticPyramids += approx;
+          totalPyramidsGained += simulatedPyramids + approx;
+        } else {
+          totalPyramidsGained += simulatedPyramids;
+        }
       }
-      worker.hires = worker.subWorkers.length;
     }
     
     // Recursively compute production for existing sub-workers
@@ -304,6 +326,12 @@ const GameEngine = {
     if (worker.pyramids && worker.pyramids > 0) {
       GameState.state.pyramids = (GameState.state.pyramids || 0) + worker.pyramids;
       worker.pyramids = 0;
+    }
+
+    // Add any synthetic pyramids computed during analytic offline simulation
+    if (worker.syntheticPyramids && worker.syntheticPyramids > 0) {
+      GameState.state.pyramids = (GameState.state.pyramids || 0) + worker.syntheticPyramids;
+      worker.syntheticPyramids = 0;
     }
     
     // Collect from sub-workers
